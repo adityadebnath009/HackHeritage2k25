@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-// import { FaBars } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 import { menuItems } from "./Icons.jsx";
-import ChatbotSidebar from "./chatbotSidebar";
+import ChatbotSidebar from "./ChatbotSidebar.jsx";
 import { Tooltip } from "react-tooltip";
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
