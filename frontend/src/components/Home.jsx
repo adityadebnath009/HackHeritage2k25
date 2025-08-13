@@ -24,10 +24,14 @@ class Home extends React.Component {
             <>
                 {/* HEADER */}
                 <header className="header">
-                    <div className="header-info"></div>
+                    <div className="header-info">
+                        <div className="header-info-logo">
+                            <img src="src/components/images/projectLogo2.png" alt="Project Logo" />
+                        </div>
+                    </div>
                     <div className="navbar">
                         <div className="nav-opts">
-                            <FontAwesomeIcon icon={faBars} />
+                            {/* <FontAwesomeIcon icon={faBars} /> */}
                             <div className="home">
                                 <p>HOME</p>
                             </div>
