@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaBars } from "react-icons/fa";
-import { menuItems } from "./components/Icons.jsx";
+// import { FaBars } from "react-icons/fa";
+import { menuItems } from "./Icons.jsx";
 import ChatbotSidebar from "./chatbotSidebar";
 import { Tooltip } from "react-tooltip";
 const Chatbot = () => {
