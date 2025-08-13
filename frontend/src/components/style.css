@@ -79,14 +79,22 @@
 }
 
 .home,
-.about {
+.about,
+.dashboard {
     height: 100%;
-    width: 115px;
-    padding-top: 5px;
+    width: auto;
+    padding: 15px;
+    padding-bottom: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-bottom: 5px solid #1d3878;
+    gap: 7px;
+}
+
+.nav-opts>div svg {
+    font-size: 1.2rem;
+    padding-bottom: 2.5px;
 }
 
 .nav-opts>div:hover {

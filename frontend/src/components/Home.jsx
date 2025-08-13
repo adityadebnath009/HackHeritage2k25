@@ -16,6 +16,8 @@ import {
     faComments,
     faComment,
     faCircleUser,
+    faHouse,
+    faFile,
 } from "@fortawesome/free-regular-svg-icons";
 
 class Home extends React.Component {
@@ -33,10 +35,16 @@ class Home extends React.Component {
                         <div className="nav-opts">
                             {/* <FontAwesomeIcon icon={faBars} /> */}
                             <div className="home">
+                                <FontAwesomeIcon icon={faHouse} />
                                 <p>HOME</p>
                             </div>
                             <div className="about">
+                                <FontAwesomeIcon icon={faFile} />
                                 <p>ABOUT US</p>
+                            </div>
+                            <div className="dashboard">
+                                <FontAwesomeIcon icon={faLaptopMedical} />
+                                <pre> DASHBOARD</pre>
                             </div>
                         </div>
                         <div className="nav-login">
