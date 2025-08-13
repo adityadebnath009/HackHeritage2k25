@@ -108,11 +108,11 @@ class Home extends React.Component {
                         <div className="test"></div>
                     </div>
                     <footer>
-                        <div className="footer-chat">
+                        <Link to="/chatbot" className="footer-chat">
                             <div className="footer-chat-content">
                                 <FontAwesomeIcon icon={faComment} />
                             </div>
-                        </div>
+                        </Link>
                     </footer>
                 </main>
             </>
