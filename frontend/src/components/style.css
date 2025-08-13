@@ -153,3 +153,30 @@
     width: auto;
     background-color: #c0c4c8;
 }
+
+/* Footer Chat */
+.footer-chat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    height: 60px;
+    width: 60px;
+    background: linear-gradient(#b6d8ff, #ffffff);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.475);
+    color: #1d3878;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 50%;
+    z-index: 1000;
+}
+
+.footer-chat-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+}
