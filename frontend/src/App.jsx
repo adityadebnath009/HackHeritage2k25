@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./components/Home.jsx"; // Importing Home component
-import Chatbot from "./components/chatbot.jsx";
+import Home from "./components/Home";
+import Chatbot from "./components/Chatbot";
 
-function App() {
+export default function App() {
   return (
     <Router>
       <Routes>
@@ -13,5 +13,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;
