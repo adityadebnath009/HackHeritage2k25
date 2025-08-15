@@ -2,5 +2,13 @@
  // It contains the requirements for the frontend dependencies.
 # Frontend dependencies
 
+npm install tailwindcss @tailwindcss/vite
 npm install @heroicons/react #For Heroicons
+
+npm install react react-dom
+npm install react-router-dom
+npm install framer-motion
+npm install react-icons
+npm install react-tooltip
+
 
