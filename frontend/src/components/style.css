@@ -255,3 +255,21 @@ body {
     justify-content: space-evenly;
     text-align: center;
 }
+
+/* ABOUT */
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 0px;
+    padding-top: 110px;
+}
+
+.hi {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    font-size: 1rem;
+}

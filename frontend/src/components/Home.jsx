@@ -139,7 +139,13 @@ class Home extends React.Component {
                 </div>
             );
         } else if (activeNav === "about") {
-            return <div className="page-content"><h2>About Us</h2><p>Content coming soon...</p></div>;
+            return (
+                <div className="about-content">
+                    <div className="hi">
+                        hi
+                    </div>
+                </div>
+            );
         } else if (activeNav === "dashboard") {
             return <div className="page-content"><h2>Dashboard</h2><p>Content coming soon...</p></div>;
         }
