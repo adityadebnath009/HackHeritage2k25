@@ -21,7 +21,16 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 
 class Home extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            hoveredItem: null, // which item is currently hovered
+        };
+    }
+
     render() {
+        const { hoveredItem } = this.state;
+
         return (
             <>
                 {/* HEADER */}
@@ -44,12 +53,12 @@ class Home extends React.Component {
                             </div>
                             <div className="dashboard">
                                 <FontAwesomeIcon icon={faLaptopMedical} />
-                                <pre> DASHBOARD</pre>
+                                <p> DASHBOARD</p>
                             </div>
                         </div>
                         <div className="nav-login">
-                            <Link to="/login" className="login-link" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5em" }}>
-                                <button className="login-btn">LOGIN <FontAwesomeIcon icon={faCircleUser} /></button>                                
+                            <Link to="/login" className="login-link" >
+                                <button className="login-btn">LOGIN <FontAwesomeIcon icon={faCircleUser} /></button>
                             </Link>
                         </div>
                     </div>
@@ -91,29 +100,65 @@ class Home extends React.Component {
                                 <p>Our Key Features</p>
                             </div>
                             <div className="content-menu-body-items">
-                                <div className="content-menu-items">
-                                    <FontAwesomeIcon icon={faUserDoctor} />
-                                    <p>Telemedicine</p>
+                                <div
+                                    className="content-menu-items"
+                                    onMouseEnter={() => this.setState({ hoveredItem: 1 })}
+                                    onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                >
+                                    {this.state.hoveredItem !== 1 && <FontAwesomeIcon icon={faUserDoctor} />}
+                                    <p className={this.state.hoveredItem === 1 ? "content-menu-hover" : ""}>
+                                        {this.state.hoveredItem === 1
+                                            ? "India’s top doctors, now just a click away !! Skip the crowd. Get the care. Anytime. Anywhere.   "
+                                            : "Telemedicine"}
+                                    </p>
                                 </div>
-                                <div className="content-menu-items">
-                                    <FontAwesomeIcon icon={faBookMedical} />
-                                    <p>Health And Wellness Module</p>
+                                <div
+                                    className="content-menu-items"
+                                    onMouseEnter={() => this.setState({ hoveredItem: 2 })}
+                                    onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                >
+                                    {this.state.hoveredItem !== 2 && <FontAwesomeIcon icon={faBookMedical} />}
+                                    <p className={this.state.hoveredItem === 2 ? "content-menu-hover" : ""}>
+                                        {this.state.hoveredItem === 2
+                                            ? "Wellness meets fun — learn, play, and grow healthier every day !! Nutrition, fitness, mental wellness, lifestyle health, WCD, and more..."
+                                            : "Health And Wellness Module"}
+                                    </p>
                                 </div>
-                                <div className="content-menu-items">
-                                    <FontAwesomeIcon icon={faCalendar} />
-                                    <p>Program Tracker And Campaign</p>
+                                <div
+                                    className="content-menu-items"
+                                    onMouseEnter={() => this.setState({ hoveredItem: 3 })}
+                                    onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                >
+                                    {this.state.hoveredItem !== 3 && <FontAwesomeIcon icon={faCalendar} />}
+                                    <p className={this.state.hoveredItem === 3 ? "content-menu-hover" : ""}>
+                                        {this.state.hoveredItem === 3
+                                            ? "Every campaign, perfectly timed on your calendar — because great timing means greater results."
+                                            : "Program And Campaign Tracker"}
+                                    </p>
                                 </div>
-                                <div className="content-menu-items">
-                                    <FontAwesomeIcon icon={faHandHoldingMedical} />
-                                    <p>Health Resource Hub</p>
+                                <div
+                                    className="content-menu-items"
+                                    onMouseEnter={() => this.setState({ hoveredItem: 4 })}
+                                    onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                >
+                                    {this.state.hoveredItem !== 4 && <FontAwesomeIcon icon={faHandHoldingMedical} />}
+                                    <p className={this.state.hoveredItem === 4 ? "content-menu-hover" : ""}>
+                                        {this.state.hoveredItem === 4
+                                            ? "Instant help when every second counts. Medical aid & ambulances — just a tap away."
+                                            : "Health Resource Hub"}
+                                    </p>
                                 </div>
-                                <div className="content-menu-items">
-                                    <FontAwesomeIcon icon={faLaptopMedical} />
-                                    <p>Dashboard</p>
-                                </div>
-                                <div className="content-menu-items">
-                                    <FontAwesomeIcon icon={faComments} />
-                                    <p>Feedback</p>
+                                <div
+                                    className="content-menu-items"
+                                    onMouseEnter={() => this.setState({ hoveredItem: 5 })}
+                                    onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                >
+                                    {this.state.hoveredItem !== 5 && <FontAwesomeIcon icon={faComments} />}
+                                    <p className={this.state.hoveredItem === 5 ? "content-menu-hover" : ""}>
+                                        {this.state.hoveredItem === 5
+                                            ? "We value your opinion — share your thoughts and help us shape the future of our services."
+                                            : "Feedback"}
+                                    </p>
                                 </div>
                             </div>
                         </div>
