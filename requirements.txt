@@ -3,7 +3,7 @@
 # Frontend dependencies
 
 npm install tailwindcss @tailwindcss/vite
-npm install @heroicons/react #For Heroicons
+npm install @heroicons/react
 
 npm install react react-dom
 npm install react-router-dom
