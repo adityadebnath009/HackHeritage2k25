@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Chatbot from "./components/Chatbot";
+import Login from "./components/Login.jsx";
+
 
 export default function App() {
   return (
@@ -9,7 +11,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
+    
   );
 }

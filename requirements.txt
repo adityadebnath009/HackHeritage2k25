@@ -1,0 +1,6 @@
+// This file is part of the HackHeritage2k25 project.
+ // It contains the requirements for the frontend dependencies.
+# Frontend dependencies
+
+npm install @heroicons/react #For Heroicons
+

@@ -48,8 +48,9 @@ class Home extends React.Component {
                             </div>
                         </div>
                         <div className="nav-login">
-                            <p>LOGIN</p>
-                            <FontAwesomeIcon icon={faCircleUser} />
+                            <Link to="/login" className="login-link" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.5em" }}>
+                                <button className="login-btn">LOGIN <FontAwesomeIcon icon={faCircleUser} /></button>                                
+                            </Link>
                         </div>
                     </div>
                 </header>

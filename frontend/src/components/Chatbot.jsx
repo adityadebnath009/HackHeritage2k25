@@ -1,13 +1,28 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { motion } from "framer-motion";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { menuItems } from "./Icons.jsx";
 import ChatbotSidebar from "./ChatbotSidebar.jsx";
 import { Tooltip } from "react-tooltip";
+
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [showSidebar] = useState(true);
+    const navigate = useNavigate(); // Initialize navigate
+
+    if (!showSidebar) return null;
+
     return (
         <div>
+            {/* Close button in top right */}
+            <button
+                className="fixed top-4 right-4 z-50 bg-white text-gray-900 rounded-full p-2 shadow hover:bg-gray-200 transition"
+                onClick={() => navigate("/")} // Redirect to main page
+                aria-label="Close Sidebar"
+            >
+                <FaTimes size={20} />
+            </button>
             <motion.div
                 initial={{ width: 60 }}
                 animate={{ width: isOpen ? 240 : 60 }}
