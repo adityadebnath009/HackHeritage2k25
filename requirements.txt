@@ -16,3 +16,6 @@ npm install react-tooltip
 npm install lucide-react
 
 npm install recharts
+
+npm install react-toastify
+

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import "./style.css";
 import Dashboard from "./Dashboard";
 import TextCarousel from './TextCarousel';
+import { AuthContext } from "./AuthContext";
+import { useContext, useState } from "react";
 
 // Font Awesome Imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,6 +24,56 @@ import {
     faHouse,
     faFile,
 } from "@fortawesome/free-regular-svg-icons";
+
+const AuthConsumer = () => {
+    const { user, logoutUser } = useContext(AuthContext);
+    return (
+        <div className="nav-login">
+            {user ? (
+                // The pb-3 expands the hoverable area below the avatar so there's no gap
+                <div className="relative group inline-block pb-[10px]">
+                    {/* Avatar */}
+                    <img
+                        src={user.profileImage || "https://www.pexels.com/photo/man-holding-black-dslr-camera-370142/"}
+                        alt="Profile"
+                        className="w-10 h-10 mt-[5px] rounded-full cursor-pointer border-2 border-cyan-600 hover:scale-110 transition"
+                    />
+
+                    {/* Hover Card (no mt-2; use top-full to eliminate gap) */}
+                    <div className="absolute right-0 top-full hidden group-hover:block z-50">
+                        <div className="w-64 bg-white text-black rounded-xl shadow-xl p-4">
+                            <h2 className="text-lg font-semibold">{user.name || "User"}</h2>
+                            <p className="text-gray-600">Role: {user.role || "—"}</p>
+                            <p className="text-gray-600">Phone: {user.phone || "Not provided"}</p>
+                            {user.email && <p className="text-gray-600">Email: {user.email}</p>}
+
+                            <div className="mt-3 flex justify-between">
+                                <button
+                                    onClick={() => (window.location.href = "/profile")}
+                                    className="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600"
+                                >
+                                    View Profile
+                                </button>
+                                <button
+                                    onClick={logoutUser}
+                                    className="px-3 py-1 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <Link to="/login" className="login-link">
+                    <button className="login-btn">
+                        LOGIN <FontAwesomeIcon icon={faCircleUser} />
+                    </button>
+                </Link>
+            )}
+        </div>
+    );
+};
 
 class Home extends React.Component {
     constructor(props) {
@@ -189,9 +241,7 @@ class Home extends React.Component {
                             </div>
                         </div>
                         <div className="nav-login">
-                            <Link to="/login" className="login-link" >
-                                <button className="login-btn">LOGIN <FontAwesomeIcon icon={faCircleUser} /></button>
-                            </Link>
+                            <AuthConsumer />
                         </div>
                     </div>
                 </header>
@@ -202,5 +252,7 @@ class Home extends React.Component {
         );
     }
 }
+
+
 
 export default Home;

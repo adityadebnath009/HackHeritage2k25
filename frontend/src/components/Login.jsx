@@ -1,12 +1,40 @@
 import React, { useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import OtpModal from "./OtpModal";
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 function LoginForm() {
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [userType, setUserType] = useState("User");
     const [showOtpModal, setShowOtpModal] = useState(false);
     const [phone, setPhone] = useState("");
     const [isOtpVerified, setIsOtpVerified] = useState(false);
+    const { loginUser } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const newUser = {
+            name: "John Doe",
+            role: userType,
+            profileImage: "https://www.pexels.com/photo/man-holding-black-dslr-camera-370142/",
+        };
+
+        loginUser(newUser);
+
+        // ✅ Show success popup
+        toast.success(isLoginMode ? "Login successful 🎉" : "Signup successful 🎉");
+
+        // Redirect after small delay (to let toast show)
+        setTimeout(() => {
+            navigate("/");
+        }, 1200);
+    };
+
+
 
     const handleSendOtp = () => {
         if (!phone) return alert("Please enter phone number");
@@ -193,11 +221,11 @@ function LoginForm() {
                     )}
 
                     {/* Submit Button */}
-                    <button className="w-full p-3 bg-[#D66025] text-white rounded-full text-lg font-medium hover:bg-[#D60025] hover:shadow-[0 0 10px [#D60025], 0 0 20px [#D60025]] transition duration-300">
-                        {isLoginMode
-                            ? `Login as ${userType}`
-                            : `Signup as ${userType}`
-                        }
+                    <button
+                        onClick={handleSubmit}
+                        className="w-full p-3 bg-[#D66025] text-white rounded-full text-lg font-medium hover:bg-[#D60025]"
+                    >
+                        {isLoginMode ? `Login as ${userType}` : `Signup as ${userType}`}
                     </button>
 
                     {/* Switch Mode Link */}
