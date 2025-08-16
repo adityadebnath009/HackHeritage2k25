@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./style.css";
+import Dashboard from "./Dashboard";
 
 // Font Awesome Imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -31,6 +32,11 @@ class Home extends React.Component {
 
     setActiveNav = (navItem) => {
         this.setState({ activeNav: navItem });
+    };
+
+    handleProgramTrackerClick = () => {
+        // Navigate to new route in same window
+        window.location.href = '/program-tracker';
     };
 
     renderContent = () => {
@@ -100,6 +106,8 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 3 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                onClick={() => this.handleProgramTrackerClick()}
+                                style={{ cursor: 'pointer' }}
                             >
                                 {this.state.hoveredItem !== 3 && <FontAwesomeIcon icon={faCalendar} />}
                                 <p className={this.state.hoveredItem === 3 ? "content-menu-hover" : ""}>
@@ -147,7 +155,7 @@ class Home extends React.Component {
                 </div>
             );
         } else if (activeNav === "dashboard") {
-            return <div className="page-content"><h2>Dashboard</h2><p>Content coming soon...</p></div>;
+            return <Dashboard />;
         }
     };
 

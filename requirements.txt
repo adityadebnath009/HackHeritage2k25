@@ -13,4 +13,6 @@ npm install framer-motion
 npm install react-icons
 npm install react-tooltip
 
+npm install lucide-react
 
+npm install recharts
