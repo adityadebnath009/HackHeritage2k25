@@ -113,12 +113,12 @@ export default function HealthHub() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-blue-50">
             {/* Top Bar with Back */}
-            <div className="sticky top-0 z-20 bg-white/70 backdrop-blur border-b">
+            <div className="sticky top-0 z-20 bg-white/70 backdrop-blur border-b" style={{ backgroundColor: "#1d3878" }}>
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-                    <button onClick={() => navigate("/")} className="flex items-center text-cyan-700 hover:text-cyan-900">
-                        <ArrowLeft className="w-5 h-5 mr-2" /> 
+                    <button onClick={() => navigate("/")} className="flex items-center mr-4 p-1 text-white  hover:bg-blue-500 rounded-lg">
+                        <ArrowLeft className="w-5 h-5 m-1" />
                     </button>
-                    <h1 className="text-xl font-bold text-cyan-800 items-center">Collaborative Health Resource Hub</h1>
+                    <h1 className="text-xl font-bold text-white items-center">Collaborative Health Resource Hub</h1>
                 </div>
             </div>
 
@@ -167,7 +167,7 @@ export default function HealthHub() {
                             <button className="inline-block px-3 py-2 rounded-lg text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">Open Directory</button>
                         </ActionCard>
                     </div>
-                    
+
                 </section>
 
                 {/* Inventory & Hospital Updates */}
