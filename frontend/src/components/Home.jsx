@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./style.css";
 import Dashboard from "./Dashboard";
+import TextCarousel from './TextCarousel';
 
 // Font Awesome Imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +12,7 @@ import {
     faBookMedical,
     faHandHoldingMedical,
     faLaptopMedical,
+    faCaretDown,
 } from "@fortawesome/free-solid-svg-icons";
 import {
     faCalendar,
@@ -48,24 +50,7 @@ class Home extends React.Component {
                     {/* Content background */}
                     <div className="content-bg">
                         <div className="content-bg-content">
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                Maiores fuga ullam eligendi aliquid accusantium incidunt
-                                quibusdam magni, id odit quae eius molestias quidem ratione
-                                sint ea repellat, praesentium libero veniam.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                                Totam aliquam sapiente rem tempora officiis ullam deserunt
-                                vero quasi ut magni ratione architecto, maiores dignissimos
-                                aut corporis. Optio eum illum magni.
-                            </p>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-                                non vitae nulla, dolorum corrupti officia maxime libero
-                                repellat odio nostrum, eligendi accusantium harum, dignissimos
-                                enim nisi itaque culpa laborum ea.
-                            </p>
+                            <TextCarousel />
                         </div>
                         <div className="content-bg-img">
                             <img src="src/components/images/hh25bg-1.jpg" alt="Background" />
@@ -82,12 +67,14 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 1 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                onClick={() => window.location.href = '/health-hub'} // <-- Added this line
+                                style={{ cursor: 'pointer' }}
                             >
-                                {this.state.hoveredItem !== 1 && <FontAwesomeIcon icon={faUserDoctor} />}
+                                {this.state.hoveredItem !== 1 && <FontAwesomeIcon icon={faHandHoldingMedical} />}
                                 <p className={this.state.hoveredItem === 1 ? "content-menu-hover" : ""}>
                                     {this.state.hoveredItem === 1
-                                        ? "India’s top doctors, now just a click away !! Skip the crowd. Get the care. Anytime. Anywhere."
-                                        : "Telemedicine"}
+                                        ? "Instant help when every second counts. Medical aid & ambulances — just a tap away."
+                                        : "Health Resource Hub"}
                                 </p>
                             </div>
                             <div
@@ -95,11 +82,11 @@ class Home extends React.Component {
                                 onMouseEnter={() => this.setState({ hoveredItem: 2 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
                             >
-                                {this.state.hoveredItem !== 2 && <FontAwesomeIcon icon={faBookMedical} />}
+                                {this.state.hoveredItem !== 2 && <FontAwesomeIcon icon={faUserDoctor} />}
                                 <p className={this.state.hoveredItem === 2 ? "content-menu-hover" : ""}>
                                     {this.state.hoveredItem === 2
-                                        ? "Wellness meets fun — learn, play, and grow healthier every day !! Nutrition, fitness, mental wellness, lifestyle health, WCD, and more..."
-                                        : "Health And Wellness Module"}
+                                        ? "India’s top doctors, now just a click away !! Skip the crowd. Get the care. Anytime. Anywhere."
+                                        : "Telemedicine"}
                                 </p>
                             </div>
                             <div
@@ -120,14 +107,12 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 4 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
-                                onClick={() => window.location.href = '/health-hub'} // <-- Added this line
-                                style={{ cursor: 'pointer' }}
                             >
-                                {this.state.hoveredItem !== 4 && <FontAwesomeIcon icon={faHandHoldingMedical} />}
+                                {this.state.hoveredItem !== 4 && <FontAwesomeIcon icon={faBookMedical} />}
                                 <p className={this.state.hoveredItem === 4 ? "content-menu-hover" : ""}>
                                     {this.state.hoveredItem === 4
-                                        ? "Instant help when every second counts. Medical aid & ambulances — just a tap away."
-                                        : "Health Resource Hub"}
+                                        ? "Wellness meets fun — learn, play, and grow healthier every day !! Nutrition, fitness, mental wellness, lifestyle health, WCD, and more..."
+                                        : "Health And Wellness Module"}
                                 </p>
                             </div>
                             <div
@@ -172,6 +157,10 @@ class Home extends React.Component {
                     <div className="header-info">
                         <div className="header-info-logo">
                             <img src="src/components/images/projectLogo2.png" alt="Project Logo" />
+                        </div>
+                        <div className="header-language">
+                            <FontAwesomeIcon icon={faCaretDown} />
+                            <p>English</p>
                         </div>
                     </div>
                     <div className="navbar">

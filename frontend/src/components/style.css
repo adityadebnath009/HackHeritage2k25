@@ -39,6 +39,21 @@ body {
     display: block;
 }
 
+.header-language {
+    width: 85px;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: #9dcbfe;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #080037;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-right: 15px;
+}
+
 /* Navbar */
 .navbar {
     width: 100%;
@@ -142,7 +157,6 @@ body {
     height: 250px;
     width: 800px;
     margin: 60px;
-    margin-right: 100px;
 }
 
 .content-bg img {
@@ -151,11 +165,20 @@ body {
     display: block;
 }
 
-.content-bg-content {
+/* .content-bg-content {
     padding: 75px;
     color: #07263f;
     font-size: 1rem;
     font-weight: bold;
+} */
+
+/* Text Carousel */
+.text-carousel {
+    padding: 50px;
+    padding-top: 80px;
+    padding-left: 100px;
+    width: 800px;
+    text-align: center;
 }
 
 /* Key Features */

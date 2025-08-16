@@ -58,21 +58,21 @@ const ProgramTracker = () => {
         {
             id: 1,
             campaignName: "Heart Health Checkup",
-            date: "2024-07-15",
+            date: "2025-04-15",
             status: "attended",
             organization: "Cardiology Institute"
         },
         {
             id: 2,
             campaignName: "Eye Care Program",
-            date: "2024-07-08",
+            date: "2024-12-08",
             status: "missed",
             organization: "Vision Care Foundation"
         },
         {
             id: 3,
             campaignName: "Blood Donation Drive",
-            date: "2024-06-25",
+            date: "2024-09-25",
             status: "attended",
             organization: "Red Cross Society"
         },
@@ -81,6 +81,22 @@ const ProgramTracker = () => {
             campaignName: "Nutrition Workshop",
             date: "2024-06-12",
             status: "attended",
+            organization: "Health Department"
+        }
+    ];
+
+    // Sample user registered campaigns
+    const registeredCamps = [
+        {
+            id: 1,
+            campaignName: "Blood Donation Drive",
+            date: "2025-10-15",
+            organization: "Red Cross Society"
+        },
+        {
+            id: 2,
+            campaignName: "Nutrition Workshop",
+            date: "2025-12-12",
             organization: "Health Department"
         }
     ];
@@ -279,6 +295,21 @@ const ProgramTracker = () => {
                         <div className="space-y-6">
                             {/* Calendar */}
                             <CalendarComponent />
+
+                            <div className="bg-white rounded-lg shadow-md p-4">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Registered Campaigns</h3>
+                                <div className="space-y-3">
+                                    {registeredCamps.map((record) => (
+                                        <div key={record.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div className="flex-1">
+                                                <h4 className="text-sm font-medium text-gray-900">{record.campaignName}</h4>
+                                                <p className="text-xs text-gray-500">{record.organization}</p>
+                                                <p className="text-xs text-gray-500">{formatDate(record.date)}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
                             {/* Attendance History */}
                             <div className="bg-white rounded-lg shadow-md p-4">
