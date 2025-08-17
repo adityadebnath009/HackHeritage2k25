@@ -1,4 +1,17 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faAward,
+    faStar,
+    faChevronDown,
+    faChevronUp,
+    faHospital,
+    faHandsHelping,
+    faHeartbeat,
+    faMapMarkerAlt,
+    faPhone,
+    faGlobe
+} from '@fortawesome/free-solid-svg-icons';
 
 const About = () => {
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -254,42 +267,35 @@ const About = () => {
                                 <div style={{
                                     fontSize: '64px',
                                     color: '#f59e0b',
-                                    marginBottom: '16px'
+                                    marginBottom: '10px'
                                 }}>
-                                    🏆
+                                    <FontAwesomeIcon icon={faAward} className="text-6xl text-yellow-600 mb-4" />
                                 </div>
-                                <h2 style={{
-                                    fontSize: '24px',
-                                    fontWeight: 'bold',
-                                    color: '#374151',
-                                    marginBottom: '8px'
-                                }}>
-                                    Healthcare Excellence
-                                </h2>
-                                <h3 style={{
-                                    fontSize: '20px',
-                                    fontWeight: '600',
-                                    color: '#d97706',
-                                    marginBottom: '16px'
-                                }}>
-                                    Digital Innovation Award
-                                </h3>
-                                <p style={{ color: '#6b7280', marginBottom: '24px' }}>
-                                    Recognized for outstanding contribution to digital healthcare solutions
-                                    and community wellness initiatives.
-                                </p>
                                 <div style={{
+                                    height: '150px',
                                     backgroundColor: 'white',
                                     borderRadius: '8px',
                                     padding: '16px',
+                                    paddingTop: '50px',
+                                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)',
+                                    marginBottom: '20px'
+                                }}>
+                                    <p style={{ fontSize: '15px', color: '#9ca3af', marginTop: '8px', marginBottom: '15px' }}>
+                                        Placeholder to upload Web Application Security Certificate
+                                    </p>
+                                </div>
+                                <div style={{
+                                    backgroundColor: 'white',
+                                    borderRadius: '8px',
+                                    padding: '10px',
                                     boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)'
                                 }}>
                                     <p style={{ fontSize: '14px', color: '#9ca3af' }}>Certified by</p>
                                     <p style={{ fontWeight: 'bold', color: '#374151' }}>
-                                        National Health Technology Board
+                                        Organisation Name
                                     </p>
                                     <p style={{ fontSize: '12px', color: '#d1d5db', marginTop: '8px' }}>
-                                        Certificate ID: HHT-2025-001
+                                        Certificate ID:
                                     </p>
                                 </div>
                             </div>
@@ -427,7 +433,9 @@ const About = () => {
                                 onMouseLeave={(e) => e.target.style.backgroundColor = '#dbeafe'}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span style={{ marginRight: '12px', fontSize: '20px' }}>💙</span>
+                                    <span style={{ marginRight: '12px', fontSize: '20px' }}>
+                                        <FontAwesomeIcon icon={faHeartbeat} className="text-blue-600 text-2xl mr-3" />
+                                    </span>
                                     <span style={{ fontWeight: '600', color: '#374151' }}>
                                         Health Centers ({healthCenters.length})
                                     </span>
@@ -475,7 +483,9 @@ const About = () => {
                                 onMouseLeave={(e) => e.target.style.backgroundColor = '#dcfce7'}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span style={{ marginRight: '12px', fontSize: '20px' }}>🤝</span>
+                                    <span style={{ marginRight: '12px', fontSize: '20px' }}>
+                                        <FontAwesomeIcon icon={faHandsHelping} className="text-green-600 text-2xl mr-3" />
+                                    </span>
                                     <span style={{ fontWeight: '600', color: '#374151' }}>
                                         NGO Partners ({ngos.length})
                                     </span>
@@ -522,7 +532,9 @@ const About = () => {
                                 onMouseLeave={(e) => e.target.style.backgroundColor = '#fee2e2'}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <span style={{ marginRight: '12px', fontSize: '20px' }}>🏥</span>
+                                    <span style={{ marginRight: '12px', fontSize: '20px' }}>
+                                        <FontAwesomeIcon icon={faHospital} className="text-red-600 text-2xl mr-3" />
+                                    </span>
                                     <span style={{ fontWeight: '600', color: '#374151' }}>
                                         Hospital Network ({hospitals.length})
                                     </span>

@@ -94,6 +94,11 @@ class Home extends React.Component {
         window.location.href = '/program-tracker';
     };
 
+    handleFeedbackClick = () => {
+        // Navigate to new route in same window
+        window.location.href = '/feedback';
+    };
+
     renderContent = () => {
         const { activeNav } = this.state;
 
@@ -172,6 +177,7 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 5 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                onClick={() => this.handleFeedbackClick()}
                             >
                                 {this.state.hoveredItem !== 5 && <FontAwesomeIcon icon={faComments} />}
                                 <p className={this.state.hoveredItem === 5 ? "content-menu-hover" : ""}>
@@ -182,8 +188,9 @@ class Home extends React.Component {
                             </div>
                         </div>
                     </div>
-
-                    <div className="test"></div>
+                    <div className="footer-about">
+                        <p>Made with care by QuantumBeings</p>
+                    </div>
                 </div>
             );
         } else if (activeNav === "about") {

@@ -8,6 +8,7 @@ import Profile from "./components/Profile.jsx";
 import ProgramTracker from "./components/ProgramTracker";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Feedback from "./components/Feedback";
 
 export default function App() {
   return (
@@ -19,7 +20,7 @@ export default function App() {
         <Route path="/program-tracker" element={<ProgramTracker />} />
         <Route path="/health-hub" element={<HealthHub />} />
         <Route path="/profile" element={<Profile />} />
-
+        <Route path="/feedback" element={<Feedback />} />
       </Routes>
       <ToastContainer position="top-center" autoClose={2000} />
     </Router>
