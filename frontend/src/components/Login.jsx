@@ -18,9 +18,9 @@ function LoginForm() {
         e.preventDefault();
 
         const newUser = {
-            name: "John Doe",
+            name: "Ajay Agarwal",
             role: userType,
-            profileImage: "https://www.pexels.com/photo/man-holding-black-dslr-camera-370142/",
+            profileImage: "src/components/images/test-profile-img-hh25.jpg",
         };
 
         loginUser(newUser);

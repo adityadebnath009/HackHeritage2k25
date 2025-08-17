@@ -34,9 +34,9 @@ const AuthConsumer = () => {
                 <div className="relative group inline-block pb-[10px]">
                     {/* Avatar */}
                     <img
-                        src={user.profileImage || "https://www.pexels.com/photo/man-holding-black-dslr-camera-370142/"}
+                        src={user.profileImage || "src/components/images/test-profile-img-hh25.jpg"}
                         alt="Profile"
-                        className="w-10 h-10 mt-[5px] rounded-full cursor-pointer border-2 border-cyan-600 hover:scale-110 transition"
+                        className="w-10 h-10 mt-[11px] rounded-full cursor-pointer border-2 border-cyan-600 hover:scale-110 transition"
                     />
 
                     {/* Hover Card (no mt-2; use top-full to eliminate gap) */}
