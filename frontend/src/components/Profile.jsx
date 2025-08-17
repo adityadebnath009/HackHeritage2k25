@@ -31,7 +31,7 @@ export default function Profile() {
                 <div className="mt-6 space-y-3 text-gray-700">
                     <p><span className="font-semibold">Phone:</span> {user.phone || "Not provided"}</p>
                     {user.email && <p><span className="font-semibold">Email:</span> {user.email}</p>}
-                    
+
                 </div>
 
                 {/* Buttons */}
