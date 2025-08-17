@@ -5,10 +5,14 @@ import Chatbot from "./components/Chatbot";
 import Login from "./components/Login.jsx";
 import HealthHub from "./components/HealthHub";
 import Profile from "./components/Profile.jsx";
+import Wellness from "./components/Wellness";
 import ProgramTracker from "./components/ProgramTracker";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Feedback from "./components/Feedback";
+import WellnessSidebar from "./components/WellnessSidebar.jsx";
+import WellnessContent from "./components/WellnessContent.jsx";
+import Telemedicine from "./components/Telemedicine.jsx";
 
 export default function App() {
   return (
@@ -21,6 +25,10 @@ export default function App() {
         <Route path="/health-hub" element={<HealthHub />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/wellnesssidebar" element={<WellnessSidebar />} />
+        <Route path="/wellness/:topic/:purpose" element={<WellnessContent />} />
+        <Route path="/telemedicine" element={<Telemedicine />} />
+
       </Routes>
       <ToastContainer position="top-center" autoClose={2000} />
     </Router>

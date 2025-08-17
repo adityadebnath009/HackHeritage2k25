@@ -139,6 +139,8 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 2 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                onClick={() => window.location.href = '/telemedicine'} // <-- Added this line
+                                style={{ cursor: 'pointer' }}
                             >
                                 {this.state.hoveredItem !== 2 && <FontAwesomeIcon icon={faUserDoctor} />}
                                 <p className={this.state.hoveredItem === 2 ? "content-menu-hover" : ""}>
@@ -165,6 +167,8 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 4 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                onClick={() => window.location.href = '/wellnesssidebar'} // <-- Added this line
+                                style={{cursor: 'pointer'}}
                             >
                                 {this.state.hoveredItem !== 4 && <FontAwesomeIcon icon={faBookMedical} />}
                                 <p className={this.state.hoveredItem === 4 ? "content-menu-hover" : ""}>
