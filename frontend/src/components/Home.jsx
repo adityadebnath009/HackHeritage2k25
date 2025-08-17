@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./style.css";
 import Dashboard from "./Dashboard";
+import About from "./About";
 import TextCarousel from './TextCarousel';
 import { AuthContext } from "./AuthContext";
 import { useContext, useState } from "react";
@@ -186,13 +187,7 @@ class Home extends React.Component {
                 </div>
             );
         } else if (activeNav === "about") {
-            return (
-                <div className="about-content">
-                    <div className="hi">
-                        hi
-                    </div>
-                </div>
-            );
+            return <About />;
         } else if (activeNav === "dashboard") {
             return <Dashboard />;
         }
