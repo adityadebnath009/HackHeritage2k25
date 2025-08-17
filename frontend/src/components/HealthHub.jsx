@@ -339,8 +339,6 @@ export default function HealthHub() {
                     </div>
                 </section>
 
-                {/* Footer note */}
-                <p className="text-md text-gray-500 text-center pb-2">Made with ❤️ by HealthBridge</p>
             </div>
         </div>
     );
