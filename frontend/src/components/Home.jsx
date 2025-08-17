@@ -248,6 +248,14 @@ class Home extends React.Component {
 
                 {/* MAIN CONTENT */}
                 <main className="content">{this.renderContent()}</main>
+
+                <footer>
+                    <Link to="/chatbot" className="footer-chat">
+                        <div className="footer-chat-content">
+                            <FontAwesomeIcon icon={faComment} />
+                        </div>
+                    </Link>
+                </footer>
             </>
         );
     }
