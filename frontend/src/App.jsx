@@ -20,7 +20,6 @@ export default function App() {
         <Route path="/health-hub" element={<HealthHub />} />
         <Route path="/profile" element={<Profile />} />
 
-        
       </Routes>
       <ToastContainer position="top-center" autoClose={2000} />
     </Router>
