@@ -21,7 +21,7 @@ export const menuItems = [
     { icon: <FaEnvelope />, text: "Messages" },
     { icon: <FaBell />, text: "Notifications" },
     { icon: <FaChartLine />, text: "Analytics" },
-    { icon: <FaCalendar />, text: "Calendar" },
+    // { icon: <FaCalendar />, text: "Calendar" },
     { icon: <FaBook />, text: "Library" },
     { icon: <FaFile />, text: "Reports" },
     { icon: <FaSearch />, text: "Search" },

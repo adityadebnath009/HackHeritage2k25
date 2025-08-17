@@ -56,7 +56,7 @@ const WellnessSidebar = () => {
                     initial={{ width: 60 }}
                     animate={{ width: isOpen ? 240 : 60 }}
                     transition={{ duration: 0.4 }}
-                    className="bg-gray-900 text-white p-4 flex flex-col gap-6"
+                    className="bg-gray-800 text-white p-4 flex flex-col gap-6"
                 >
                     <button className="text-xl mb-4" onClick={() => setIsOpen((prev) => !prev)}>
                         <FaBars />
@@ -69,13 +69,13 @@ const WellnessSidebar = () => {
                 </motion.div>
 
                 {/* Main Content Area */}
-                <main className="flex-1 p-6 overflow-y-auto">
-                    <h2 className="text-2xl font-bold mb-6 text-center">Health and Wellness Modules</h2>
+                <main className="flex-1 p-6 overflow-y-auto bg-blue-100">
+                    <h2 className="text-2xl font-bold mb-15 mt-5 text-center">Health and Wellness Modules</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-8">
                         {modules.map((module) => (
                             <div
                                 key={module.name}
-                                className={`h-40 rounded-2xl flex flex-col justify-center items-center bg-cyan-500 text-black font-semibold shadow hover:scale-105 transition cursor-pointer ${selectedModule === module.name ? 'ring-4 ring-blue-600' : ''
+                                className={`h-40 rounded-2xl flex flex-col justify-center items-center bg-sky-400 text-blue-950 font-semibold shadow hover:scale-105 transition cursor-pointer ${selectedModule === module.name ? 'ring-4 ring-blue-600' : ''
                                     }`}
                                 onClick={() => setSelectedModule(module.name)}
                             >
@@ -84,11 +84,11 @@ const WellnessSidebar = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="flex justify-center items-center gap-8 mb-6">
+                    <div className="flex justify-center items-center gap-15 mt-15">
                         <button
                             onClick={() => handlePurposeClick('modules')}
                             disabled={!selectedModule}
-                            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-lg font-semibold shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            className="bg-blue-800 text-white px-15 py-5 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-lg font-semibold shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
                             <FaBook />
                             Health Modules
@@ -96,7 +96,7 @@ const WellnessSidebar = () => {
                         <button
                             onClick={() => handlePurposeClick('games')}
                             disabled={!selectedModule}
-                            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-lg font-semibold shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            className="bg-blue-800 text-white px-15 py-5 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 text-lg font-semibold shadow disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
                             <FaGamepad />
                             Games for Practice

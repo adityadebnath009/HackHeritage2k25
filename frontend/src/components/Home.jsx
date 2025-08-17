@@ -168,7 +168,7 @@ class Home extends React.Component {
                                 onMouseEnter={() => this.setState({ hoveredItem: 4 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
                                 onClick={() => window.location.href = '/wellnesssidebar'} // <-- Added this line
-                                style={{cursor: 'pointer'}}
+                                style={{ cursor: 'pointer' }}
                             >
                                 {this.state.hoveredItem !== 4 && <FontAwesomeIcon icon={faBookMedical} />}
                                 <p className={this.state.hoveredItem === 4 ? "content-menu-hover" : ""}>

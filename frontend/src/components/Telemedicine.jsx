@@ -46,7 +46,7 @@ export default function Telemedicine() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 pb-10">
             {/* Header - DO NOT TOUCH */}
             <div
                 className="sticky top-0 z-20 bg-white/70 backdrop-blur border-b"
@@ -66,12 +66,12 @@ export default function Telemedicine() {
             </div>
 
             {/* Main Content */}
-            <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow space-y-8">
+            <div className="max-w-3xl mx-auto mt-10 p-10 bg-blue-100 rounded-xl shadow space-y-8">
                 {/* eSanjeevani Section */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <div className="text-lg font-semibold mb-1">eSanjeevani</div>
-                        <div className="text-gray-600 text-sm">
+                        <div className="text-xl font-semibold mb-1">eSanjeevani</div>
+                        <div className="text-gray-600 text-base">
                             India's National Telemedicine Service
                         </div>
                     </div>
@@ -79,15 +79,16 @@ export default function Telemedicine() {
                         href="https://esanjeevani.mohfw.gov.in/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow hover:bg-blue-700 transition"
+                        className="bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow hover:bg-blue-800 transition"
                     >
                         Visit eSanjeevani
                     </a>
                 </div>
-
+            </div>
+            <div className="max-w-3xl mx-auto mt-10 p-6 bg-white rounded-xl shadow space-y-8">
                 {/* Appointment Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="text-lg font-semibold">Book an Appointment</div>
+                    <div className="text-xl font-semibold">Book an Appointment</div>
 
                     {/* Doctor Dropdown */}
                     <div>
@@ -208,7 +209,7 @@ export default function Telemedicine() {
                     </p>
                 </div>
 
-                
+
             </div>
         </div>
     );
