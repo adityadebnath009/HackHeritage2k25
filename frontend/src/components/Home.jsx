@@ -45,7 +45,6 @@ const AuthConsumer = () => {
                         <div className="w-64 bg-white text-black rounded-xl shadow-xl p-4">
                             <h2 className="text-lg font-semibold">{user.name || "User"}</h2>
                             <p className="text-gray-600">Role: {user.role || "—"}</p>
-                            <p className="text-gray-600">Phone: {user.phone || "Not provided"}</p>
                             {user.email && <p className="text-gray-600">Email: {user.email}</p>}
 
                             <div className="mt-3 flex justify-between">
