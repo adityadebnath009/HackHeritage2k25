@@ -3,13 +3,10 @@ from firebase_admin import credentials
 import os
 from dotenv import load_dotenv
 load_dotenv()
-from pathlib import Path
+creds_path = os.getenv("FIREBASE_CREDENTIALS_JSON")
 
-rel = os.getenv("FIREBASE_CREDENTIALS_JSON")
-base = Path(__file__).resolve().parent  # backend/config
-creds_path = (base / rel).resolve()
+# Check if the path exists before trying to use it
+if not creds_path or not os.path.exists(creds_path):
+    raise FileNotFoundError(f"Missing Firebase credentials. Check your .env file and the path: {creds_path}")
 
-if not creds_path.exists():
-    raise FileNotFoundError(f"Missing Firebase credentials at: {creds_path}")
-
-cred = credentials.Certificate(str(creds_path))
+cred = credentials.Certificate(creds_path)

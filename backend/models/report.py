@@ -1,23 +1,23 @@
 
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile
 from pydantic import BaseModel, Field
 from typing import Optional, List, Literal
 from datetime import date, time, datetime
-
-
+from pydantic_extra_types.phone_numbers import PhoneNumber 
+from typing import Annotated
 
 
 class ReportCreate(BaseModel):
     
     report_id: Optional[str] = Field(default=None, description="Unique identifier for the report")
     reporter_name: str = Field(description="Name of the person reporting")
+    phone_number: Annotated[PhoneNumber, Field(description="Phone number of the reporter")]
     role: Optional[str] = Field(None, description="Role of the reporter(CHW/MEMBER)")
     
     category: Literal[
         "Symptoms / Health Concern",
         "Environmental Health",
-        "Healthcare Services",
-        "Emergency / Disaster",
+        "Healthcare Services","Emergency / Disaster",
         "Animal / Vector Issues",
         "Community Requests / Awareness / Requests"
     ] = Field(description = "Category of the report.")
@@ -41,7 +41,7 @@ class ReportResponse(ReportCreate):
 
     class Config:
         orm_mode = True
-
-
+        
 class ReportUpdate(BaseModel):
     status: Literal["Unresolved", "Resolved", "Pending"] = Field(..., description="New status of the report")
+    resolved_by: Optional[str] = Field(None, description="Name or ID of the person resolving the report")
