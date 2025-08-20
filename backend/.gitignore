@@ -1,2 +1,5 @@
+# Ignore environment variables
 .env
+
+# Ignore all JSON files (which includes your service account key)
 *.json
