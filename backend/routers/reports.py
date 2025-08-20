@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from datetime import datetime
 from pymongo.collection import Collection
-from models.report import ReportCreate, ReportResponse
+from models.report import ReportCreate, ReportResponse, ReportUpdate
 from db import get_reports_collection
 from utils.id_generator import generate_report_id
 
