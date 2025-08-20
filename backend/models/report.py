@@ -41,3 +41,7 @@ class ReportResponse(ReportCreate):
 
     class Config:
         orm_mode = True
+
+
+class ReportUpdate(BaseModel):
+    status: Literal["Unresolved", "Resolved", "Pending"] = Field(..., description="New status of the report")

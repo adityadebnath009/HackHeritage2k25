@@ -3,6 +3,7 @@ from fastapi import FastAPI
 import firebase_admin
 from routers.firebase import firebase_router
 from fastapi.middleware.cors import CORSMiddleware
+from routers import reports
 
 app = FastAPI(title="Health Bridge API")
 origins = [
@@ -19,6 +20,7 @@ app.add_middleware(
 
 
 app.include_router(firebase_router, tags=["Authentication"]) 
+app.include_router(reports.router)
 firebase_admin.initialize_app(cred)
 
 @app.get("/")

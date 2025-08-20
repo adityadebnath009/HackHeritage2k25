@@ -1,6 +1,6 @@
 # app/db.py
 from pymongo import MongoClient
-from .core.config import MONGO_URI, USER_DB, COMMUNITY_DB
+from core.config import MONGO_URI, USER_DB, COMMUNITY_DB
 
 # Initialize a single MongoDB client for the app
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
@@ -31,5 +31,5 @@ def get_user_db():
 def get_user_collection():
     return user_col
 
-def get_report_collection():
+def get_reports_collection():
     return report_col
