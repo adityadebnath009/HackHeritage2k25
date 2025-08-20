@@ -2,7 +2,7 @@ import React from 'react'
 
 const ChatbotSidebar = ({ icon, text, isOpen, setIsOpen }) => {
     return (
-        <div className='flex items-center gap-4 cursor-pointer w-full hover:text-blue-400'>
+        <div className='flex items-center gap-4 z-100 cursor-pointer w-full hover:text-blue-400'>
             <span
                 data-tooltip-id={!isOpen ? 'sidebar-tooltip' : undefined}
                 data-tooltip-content={!isOpen ? text : undefined}
@@ -11,7 +11,9 @@ const ChatbotSidebar = ({ icon, text, isOpen, setIsOpen }) => {
             </span>
             {isOpen && <div>{text}</div>}
         </div>
+        
     )
+    
 }
 
 export default ChatbotSidebar
