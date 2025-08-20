@@ -59,3 +59,14 @@ uvicorn==0.35.0
 uvloop==0.21.0
 watchfiles==1.1.0
 websockets==15.0.1
+
+
+
+#Firebase setup
+pip install firebase-admin fastapi uvicorn python-dotenv
+pip install dotenv
+pip install python-multipart
+
+
+npm install axios
+npm install firebase

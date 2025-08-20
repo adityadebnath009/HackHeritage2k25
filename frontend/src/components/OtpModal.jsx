@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-export default function OtpModal({ phoneNumber, onClose, onVerify }) {
+// The 'onVerify' prop will now be a function that takes the otp
+export default function OtpModal({ phoneNumber, onClose, onVerify }) { 
     const [otp, setOtp] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState(""); // You can keep this for immediate UI feedback if needed
 
-    const handleVerifyOtp = () => {
-        // Replace with actual OTP validation API call
-        if (otp === "1234") {
-            onVerify();
-            onClose();
-        } else {
-            setError("Invalid OTP. Please try again.");
+    const handleVerifyClick = () => {
+        if (otp.length !== 6) { // Simple validation
+            setError("OTP must be 6 digits.");
+            return;
         }
+        setError("");
+        // Call the function passed from the parent (LoginForm)
+        onVerify(otp); 
     };
+
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -43,7 +45,8 @@ export default function OtpModal({ phoneNumber, onClose, onVerify }) {
                     type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    placeholder="Enter OTP"
+                    placeholder="Enter 6-digit OTP"
+                    maxLength="6"
                     className="border border-gray-300 rounded-lg p-2 w-full text-center focus:outline-none focus:ring focus:ring-cyan-400"
                 />
 
@@ -52,10 +55,10 @@ export default function OtpModal({ phoneNumber, onClose, onVerify }) {
 
                 {/* Verify Button */}
                 <button
-                    onClick={handleVerifyOtp}
+                    onClick={handleVerifyClick}
                     className="bg-cyan-500 text-white px-4 py-2 rounded-lg mt-4 w-full hover:bg-cyan-600"
                 >
-                    Verify
+                    Verify & Login
                 </button>
             </div>
         </div>

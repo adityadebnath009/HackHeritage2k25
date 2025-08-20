@@ -1,10 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import OtpModal from "./OtpModal";
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";      // Import axios for API calls
+
+import {initializeApp} from "firebase/app";     // Import Firebase app initialization
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"; // Import Firebase authentication methods
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDyRyuevoNLqJ6bXqn2G4xvDhsTyCZrwn4",
+  authDomain: "hackathon-83422.firebaseapp.com",
+  projectId: "hackathon-83422",
+  storageBucket: "hackathon-83422.firebasestorage.app",
+  messagingSenderId: "1080108757472",
+  appId: "1:1080108757472:web:ce815fac936904a9a43b85",
+  measurementId: "G-T2DT75R52P"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
 function LoginForm() {
     const [isLoginMode, setIsLoginMode] = useState(true);
     const [userType, setUserType] = useState("User");
@@ -14,36 +34,90 @@ function LoginForm() {
     const { loginUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        const newUser = {
-            name: "Ajay Agarwal",
-            role: userType,
-            profileImage: "src/components/images/test-profile-img-hh25.jpg",
+    useEffect(() => {
+        const setupRecaptcha = () => {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+                'callback': (response) => {
+                    console.log("reCAPTCHA verified");
+                }
+            });
         };
+        setupRecaptcha();
+    }, []);
 
-        loginUser(newUser);
+    const handleSendOtp = (e) => {
+        e.preventDefault();
+        if (!phone || phone.length < 10) {
+            toast.error("Please enter a valid phone number.");
+            return;
+        }
 
-        // ✅ Show success popup
-        toast.success(isLoginMode ? "Login successful 🎉" : "Signup successful 🎉");
+        const appVerifier = window.recaptchaVerifier;
+        const formattedPhoneNumber = `+91${phone}`; // Adjust country code as needed
+        console.log("Formatted for Firebase:", formattedPhoneNumber);
+        signInWithPhoneNumber(auth, formattedPhoneNumber, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                toast.success("OTP sent successfully!");
+                setShowOtpModal(true);
+            }).catch((error) => {
+                console.error("Error sending OTP", error);
+                toast.error("Failed to send OTP. Check the console for details.");
+            });
+    };
 
-        // Redirect after small delay (to let toast show)
-        setTimeout(() => {
-            navigate("/");
-        }, 1200);
+    // 4. This function will be passed to the OtpModal
+    const handleVerifyOtp = (otp) => {
+        window.confirmationResult.confirm(otp).then((result) => {
+            // User signed in successfully.
+            const user = result.user;
+            toast.info("Phone number verified. Logging in...");
+
+            // 5. Get the Firebase ID Token
+            user.getIdToken().then((idToken) => {
+                
+                // 6. Send the token to your FastAPI backend
+                axios.post("http://127.0.0.1:8000/verify-otp", { id_token: idToken })
+                    .then(response => {
+                        // Assuming your backend returns user data and your internal JWT
+                        const backendResponse = response.data;
+                        console.log("Backend response:", backendResponse);
+
+                        // MOCK USER DATA (replace with data from backendResponse)
+                        const loggedInUser = {
+                            name: "Ajay Agarwal", // This should come from your DB via the backend
+                            role: userType,
+                            phone: backendResponse.phone,
+                            uid: backendResponse.uid,
+                            // Add the internal JWT token here to use for other API calls
+                            token: backendResponse.access_token 
+                        };
+                        
+                        loginUser(loggedInUser);
+                        setIsOtpVerified(true);
+                        setShowOtpModal(false);
+
+                        toast.success(isLoginMode ? "Login successful 🎉" : "Signup successful 🎉");
+                        setTimeout(() => navigate("/"), 1200);
+
+                    }).catch(error => {
+                        console.error("Error verifying with backend:", error);
+                        toast.error("Backend verification failed. Please try again.");
+                    });
+            });
+
+        }).catch((error) => {
+            console.error("Error verifying OTP with Firebase", error);
+            toast.error("Invalid OTP. Please try again.");
+        });
     };
 
 
-
-    const handleSendOtp = () => {
-        if (!phone) return alert("Please enter phone number");
-        // Call backend to send OTP here
-        setShowOtpModal(true);
-    };
 
     return (
         <div className='grid gap-4 w-screen min-h-screen place-items-center bg-gray-200 login-page'>
+            <div id="recaptcha-container"></div>
             <div className="w-[400px] bg-white p-8 mt-[20px] mb-[20px]  rounded-2xl shadow-lg shadow-gray-500/80">
                 <div className="flex justify-center mb-2">
                     <img src="src/components/images/projectLogo2.png" alt="Project Logo" className=" w-[140px]" />
@@ -169,7 +243,7 @@ function LoginForm() {
                     {/* Phone Number Field with Send OTP */}
                     <div className="flex items-center gap-2">
                         <input
-                            type="number"
+                            type="tel"
                             placeholder="Phone Number"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
@@ -221,8 +295,8 @@ function LoginForm() {
                     )}
 
                     {/* Submit Button */}
-                    <button
-                        onClick={handleSubmit}
+                    <button type="button"
+                        onClick={handleSendOtp}
                         className="w-full p-3 bg-[#D66025] text-white rounded-full text-lg font-medium hover:bg-[#D60025]"
                     >
                         {isLoginMode ? `Login as ${userType}` : `Signup as ${userType}`}
@@ -248,7 +322,7 @@ function LoginForm() {
                 <OtpModal
                     phoneNumber={phone}
                     onClose={() => setShowOtpModal(false)}
-                    onVerify={() => setIsOtpVerified(true)}
+                    onVerify={handleVerifyOtp}
                 />
             )}
         </div>
