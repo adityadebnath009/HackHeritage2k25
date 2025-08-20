@@ -114,7 +114,7 @@ const Feedback = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header - Similar to Program Tracker */}
-            <header className="shadow-sm border-b" style={{ backgroundColor: "#1d3878" }}>
+            <header className="sticky top-0 shadow-sm border-b" style={{ backgroundColor: "#1d3878" }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center">
