@@ -1,121 +1,175 @@
-import React, { useState } from 'react';
-import './CommunityReport.css'; // We will create this CSS file next
+import React, { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CommunityReport = () => {
-    // State to hold form data
+    const navigate = useNavigate();
+
+    const [showForm, setShowForm] = useState(false);
+    const [reportId, setReportId] = useState(null);
+
     const [formData, setFormData] = useState({
-        reporter_name: '',
-        phone_number: '',
-        category: '',
-        description: '',
-        location: ''
+        reporter_name: "",
+        phone_number: "",
+        category: "",
+        description: "",
+        location: "",
     });
-
-    // State for managing submission status (e.g., loading, success, error)
-    const [status, setStatus] = useState({
-        loading: false,
-        error: null,
-        success: null,
-    });
-
-    // --- IMPORTANT: UPDATE THIS URL ---
-    // This should be the full URL to your running FastAPI backend's create endpoint
-    const API_URL = 'http://127.0.0.1:8000/reports/create';
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setStatus({ loading: true, error: null, success: null });
-
-        // Get current date and time
-        const now = new Date();
-        const report_date = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
-        const report_time = now.toTimeString().split(' ')[0]; // Format: HH:MM:SS
-
-        const payload = {
-            ...formData,
-            report_date: report_date,
-            report_time: report_time,
-            // You can add lat/long here if you implement geolocation
-            lat: null, 
-            long: null,
-        };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            if (!response.ok) {
-                // Try to get error detail from API response
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Something went wrong');
-            }
-
-            const result = await response.json();
-            setStatus({ loading: false, success: `Report submitted successfully! Your Report ID is: ${result.report_id}`, error: null });
-            setFormData({ // Reset form
-                reporter_name: '',
-                phone_number: '',
-                category: '',
-                description: '',
-                location: ''
-            });
-
-        } catch (error) {
-            setStatus({ loading: false, success: null, error: error.message });
-        }
+        // Normally call backend here
+        setReportId(Math.floor(Math.random() * 10000)); // Mock ID
+        setShowForm(false); // Hide form after submit
     };
 
     return (
-        <div className="report-container">
-            <div className="report-header">
-                <h2>Community Report Form</h2>
-                <p>Report a local issue. Your submission helps us improve our community.</p>
+        <div className="min-h-screen bg-gray-50">
+            {/* Header */}
+            <div
+                className="sticky top-0 z-20 bg-white/70 backdrop-blur border-b"
+                style={{ backgroundColor: "#1d3878" }}
+            >
+                <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+                    <button
+                        onClick={() => navigate("/")}
+                        className="flex items-center mr-4 p-1 text-white hover:bg-blue-500 rounded-lg"
+                    >
+                        <ArrowLeft className="w-5 h-5 m-1" />
+                    </button>
+                    <h1 className="text-xl font-bold text-white items-center">
+                        Community Reporting
+                    </h1>
+                </div>
             </div>
-            <form onSubmit={handleSubmit} className="report-form">
-                <div className="form-group">
-                    <label htmlFor="reporter_name">Your Name</label>
-                    <input type="text" id="reporter_name" name="reporter_name" value={formData.reporter_name} onChange={handleInputChange} required />
+
+            {/* Main Content */}
+            <div className="py-12 px-4 sm:px-6 lg:px-8 flex justify-center">
+                <div className="max-w-lg w-full bg-white shadow-lg rounded-lg p-6 space-y-6">
+                    {/* 1. Category + Report button */}
+                    <div>
+                        <h2 className="text-lg font-bold mb-4">Community Reporting</h2>
+                        <label className="block text-sm font-medium text-gray-700">
+                            Category
+                        </label>
+                        <select
+                            name="category"
+                            value={formData.category}
+                            onChange={handleInputChange}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                        >
+                            <option value="" disabled>
+                                Select a category
+                            </option>
+                            <option value="Symptoms / Health Concern">
+                                Symptoms / Health Concern
+                            </option>
+                            <option value="Environmental Health">Environmental Health</option>
+                            <option value="Healthcare Services">Healthcare Services</option>
+                            <option value="Emergency / Disaster">Emergency / Disaster</option>
+                            <option value="Animal / Vector Issues">Animal / Vector Issues</option>
+                            <option value="Community Requests / Awareness">
+                                Community Requests / Awareness
+                            </option>
+                        </select>
+
+                        <button
+                            onClick={() => setShowForm(true)}
+                            className="mt-4 w-full py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                        >
+                            Report
+                        </button>
+                    </div>
+
+                    {/* 2. Form (stacked below category) */}
+                    {showForm && (
+                        <form onSubmit={handleSubmit} className="space-y-4 border-t pt-4">
+                            <h3 className="text-md font-semibold mb-2">Report Form</h3>
+                            <input
+                                type="text"
+                                name="reporter_name"
+                                placeholder="Your Name"
+                                value={formData.reporter_name}
+                                onChange={handleInputChange}
+                                className="w-full border rounded-md p-2"
+                                required
+                            />
+                            <input
+                                type="tel"
+                                name="phone_number"
+                                placeholder="Phone Number"
+                                value={formData.phone_number}
+                                onChange={handleInputChange}
+                                className="w-full border rounded-md p-2"
+                                required
+                            />
+                            <input
+                                type="text"
+                                name="location"
+                                placeholder="Location"
+                                value={formData.location}
+                                onChange={handleInputChange}
+                                className="w-full border rounded-md p-2"
+                                required
+                            />
+                            <textarea
+                                name="description"
+                                placeholder="Description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                className="w-full border rounded-md p-2"
+                                required
+                            ></textarea>
+
+                            <div className="flex gap-3">
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700"
+                                >
+                                    Submit
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForm(false)}
+                                    className="flex-1 bg-gray-300 py-2 rounded-md hover:bg-gray-400"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {/* 3. Report Details Card (always stacked below everything) */}
+                    {reportId && (
+                        <div className="p-4 border rounded-md bg-gray-50">
+                            <h3 className="text-md font-semibold mb-2">Report Details</h3>
+                            <p>
+                                <strong>Report ID:</strong> {reportId}
+                            </p>
+                            <p>
+                                <strong>Name:</strong> {formData.reporter_name}
+                            </p>
+                            <p>
+                                <strong>Phone:</strong> {formData.phone_number}
+                            </p>
+                            <p>
+                                <strong>Location:</strong> {formData.location}
+                            </p>
+                            <p>
+                                <strong>Description:</strong> {formData.description}
+                            </p>
+                            <p>
+                                <strong>Status:</strong> Pending
+                            </p>
+                        </div>
+                    )}
                 </div>
-                <div className="form-group">
-                    <label htmlFor="phone_number">Your Phone Number</label>
-                    <input type="tel" id="phone_number" name="phone_number" placeholder="+91..." value={formData.phone_number} onChange={handleInputChange} required />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="category">Category of Report</label>
-                    <select id="category" name="category" value={formData.category} onChange={handleInputChange} required>
-                        <option value="" disabled>Select a category</option>
-                        <option value="Symptoms / Health Concern">Symptoms / Health Concern</option>
-                        <option value="Environmental Health">Environmental Health</option>
-                        <option value="Healthcare Services">Healthcare Services</option>
-                        <option value="Emergency / Disaster">Emergency / Disaster</option>
-                        <option value="Animal / Vector Issues">Animal / Vector Issues</option>
-                        <option value="Community Requests / Awareness / Requests">Community Requests / Awareness</option>
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="description">Details of the Issue</label>
-                    <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required></textarea>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="location">Location / Address</label>
-                    <input type="text" id="location" name="location" placeholder="e.g., Near Habra Station Road" value={formData.location} onChange={handleInputChange} required />
-                </div>
-                <button type="submit" disabled={status.loading}>
-                    {status.loading ? 'Submitting...' : 'Submit Report'}
-                </button>
-            </form>
-            {status.success && <div className="form-message success">{status.success}</div>}
-            {status.error && <div className="form-message error">{status.error}</div>}
+            </div>
         </div>
     );
 };
