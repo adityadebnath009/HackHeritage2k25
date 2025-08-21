@@ -9,5 +9,6 @@ USER_DB = os.getenv("USER_DB")
 COMMUNITY_DB = os.getenv("COMMUNITY_DB")
 
 
+
 if not MONGO_URI or not USER_DB:
     raise ValueError("MongoDB environment variables are missing!")
