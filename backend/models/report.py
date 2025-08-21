@@ -3,7 +3,7 @@ from fastapi import FastAPI, UploadFile
 from pydantic import BaseModel, Field
 from typing import Optional, List, Literal
 from datetime import date, time, datetime
-from pydantic_extra_types.phone_numbers import PhoneNumber 
+from pydantic_extra_types import PhoneNumber 
 from typing import Annotated
 
 
@@ -43,5 +43,5 @@ class ReportResponse(ReportCreate):
         orm_mode = True
         
 class ReportUpdate(BaseModel):
-    status: Literal["Unresolved", "Resolved", "Pending"] = Field(..., description="New status of the report")
+    status: Literal["In Progress", "Resolved", "Pending"] = Field(..., description="New status of the report")
     resolved_by: Optional[str] = Field(None, description="Name or ID of the person resolving the report")
