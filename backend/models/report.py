@@ -5,7 +5,7 @@ from typing import Optional, List, Literal
 from datetime import date, time, datetime
 from pydantic_extra_types.phone_numbers import PhoneNumber 
 from typing import Annotated
-
+from pydantic import ConfigDict
 
 class ReportCreate(BaseModel):
     
@@ -30,17 +30,18 @@ class ReportCreate(BaseModel):
     long: Optional[float] = Field(None, description="Longitude of the report location")
     attachments: Optional[List[str]] = Field(default=[], description="List of file paths uploaded")
     
-    status: Optional[str] = Field(default = "Unresolved", description="Status of the report")
+    status: Optional[str] = Field(default = "Pending", description="Status of the report")
     
     
     
 class ReportResponse(ReportCreate):
-    report_id: Optional[str] = None
+    report_id: str
     created_at: datetime
+    sms_status: Optional[dict] = Field(None, description="SMS notification status")
+    model_config = ConfigDict(from_attributes=True)
     
 
-    class Config:
-        orm_mode = True
+    
         
 class ReportUpdate(BaseModel):
     status: Literal["In Progress", "Resolved", "Pending"] = Field(..., description="New status of the report")

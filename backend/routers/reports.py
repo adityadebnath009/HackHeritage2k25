@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo.collection import Collection
 from models.report import ReportCreate, ReportResponse, ReportUpdate
 from db import get_reports_collection
@@ -18,7 +18,7 @@ def create_report(report: ReportCreate, reports: Collection = Depends(get_report
     # Prepare report dictionary for MongoDB
     report_dict = report.dict()
     report_dict["report_id"] = report_id
-    report_dict["created_at"] = datetime.utcnow()
+    report_dict["created_at"] = datetime.now(timezone.utc)
     report_dict["status"] = "Pending"  # Ensure new reports start as Pending
     
     # Insert into MongoDB
