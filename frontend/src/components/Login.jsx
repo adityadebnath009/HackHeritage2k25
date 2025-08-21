@@ -76,7 +76,7 @@ function LoginForm() {
 
             // 5. Get the Firebase ID Token
             user.getIdToken().then((idToken) => {
-                
+                console.log("Firebase ID Token:", idToken);
                 // 6. Send the token to your FastAPI backend
                 axios.post("http://127.0.0.1:8000/verify-otp", { id_token: idToken })
                     .then(response => {
