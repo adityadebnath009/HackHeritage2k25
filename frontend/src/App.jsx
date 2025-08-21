@@ -14,6 +14,10 @@ import WellnessSidebar from "./components/WellnessSidebar.jsx";
 import WellnessContent from "./components/WellnessContent.jsx";
 import Telemedicine from "./components/Telemedicine.jsx";
 
+
+// --- 1. IMPORT THE NEW COMPONENT ---
+import CommunityReport from "./components/CommunityReport.jsx";
+
 export default function App() {
   return (
     <Router>
@@ -28,6 +32,10 @@ export default function App() {
         <Route path="/wellnesssidebar" element={<WellnessSidebar />} />
         <Route path="/wellness/:topic/:purpose" element={<WellnessContent />} />
         <Route path="/telemedicine" element={<Telemedicine />} />
+
+        {/* --- 2. ADD THE NEW ROUTE FOR THE REPORTING PAGE --- */}
+        <Route path="/report-issue" element={<CommunityReport />} />
+
 
       </Routes>
       <ToastContainer position="top-center" autoClose={2000} />

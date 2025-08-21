@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from datetime import datetime, timezone
+from typing import Literal, Optional
+from fastapi import APIRouter, Depends, HTTPException, status, Query
+from datetime import date, datetime, timezone
 from pymongo.collection import Collection
-from models.report import ReportCreate, ReportResponse, ReportUpdate
+from models.report import ReportCreate, ReportResponse, ReportUpdate, PaginatedReportResponse
 from db import get_reports_collection
 from utils.id_generator import generate_report_id
 from utils.sms_service import sms_sender
+from bson import ObjectId
 
 router = APIRouter(prefix="/reports", tags = ["Reports"])
 
@@ -85,3 +87,49 @@ def update_report_status(
     }
 
 
+
+
+def serialize_report(report):
+    report["_id"] = str(report["_id"])
+    return report
+
+@router.get("/", response_model=PaginatedReportResponse, status_code=status.HTTP_200_OK)
+def get_all_reports(
+    status: Optional[Literal["Pending", "In Progress", "Resolved"]] = Query(None, description="Filter by report status"),
+    category: Optional[str] = Query(None, description="Filter by report category"),
+    reporter_phone: Optional[str] = Query(None, description="Filter by reporter phone"),
+    start_date: Optional[date] = Query(None, description="Start date (YYYY-MM-DD)"),
+    end_date: Optional[date] = Query(None, description="End date (YYYY-MM-DD)"),
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
+    reports: Collection = Depends(get_reports_collection)
+):
+    # Build filters
+    filter_query = {}
+    if status:
+        filter_query["status"] = status
+    if category:
+        filter_query["category"] = category
+    if reporter_phone:
+        filter_query["phone_number"] = reporter_phone
+    if start_date or end_date:
+        date_query = {}
+        if start_date:
+            date_query["$gte"] = datetime.combine(start_date, datetime.min.time())
+        if end_date:
+            date_query["$lte"] = datetime.combine(end_date, datetime.max.time())
+        filter_query["report_date"] = date_query
+
+    # Count
+    total_count = reports.count_documents(filter_query)
+
+    # Fetch
+    cursor = reports.find(filter_query).sort("created_at", -1).skip((page - 1) * limit).limit(limit)
+    results = [serialize_report(r) for r in cursor]
+
+    return {
+        "total_count": total_count,
+        "page": page,
+        "limit": limit,
+        "data": results
+    }

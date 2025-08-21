@@ -16,6 +16,7 @@ import {
     faHandHoldingMedical,
     faLaptopMedical,
     faCaretDown,
+    faBullhorn, // <-- CHANGE 1: ICON IMPORTED HERE
 } from "@fortawesome/free-solid-svg-icons";
 import {
     faCalendar,
@@ -124,7 +125,7 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 1 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
-                                onClick={() => window.location.href = '/health-hub'} // <-- Added this line
+                                onClick={() => window.location.href = '/health-hub'}
                                 style={{ cursor: 'pointer' }}
                             >
                                 {this.state.hoveredItem !== 1 && <FontAwesomeIcon icon={faHandHoldingMedical} />}
@@ -138,7 +139,7 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 2 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
-                                onClick={() => window.location.href = '/telemedicine'} // <-- Added this line
+                                onClick={() => window.location.href = '/telemedicine'}
                                 style={{ cursor: 'pointer' }}
                             >
                                 {this.state.hoveredItem !== 2 && <FontAwesomeIcon icon={faUserDoctor} />}
@@ -166,7 +167,7 @@ class Home extends React.Component {
                                 className="content-menu-items"
                                 onMouseEnter={() => this.setState({ hoveredItem: 4 })}
                                 onMouseLeave={() => this.setState({ hoveredItem: null })}
-                                onClick={() => window.location.href = '/wellnesssidebar'} // <-- Added this line
+                                onClick={() => window.location.href = '/wellnesssidebar'}
                                 style={{ cursor: 'pointer' }}
                             >
                                 {this.state.hoveredItem !== 4 && <FontAwesomeIcon icon={faBookMedical} />}
@@ -189,6 +190,23 @@ class Home extends React.Component {
                                         : "Feedback"}
                                 </p>
                             </div>
+
+                            {/* --- CHANGE 2 & 3: NEW FEATURE BOX WITH IMPROVED LINK --- */}
+                            <Link to="/report-issue" className="content-menu-items">
+                                <div
+                                    onMouseEnter={() => this.setState({ hoveredItem: 6 })}
+                                    onMouseLeave={() => this.setState({ hoveredItem: null })}
+                                >
+                                    {this.state.hoveredItem !== 6 && <FontAwesomeIcon icon={faBullhorn} />}
+                                    <p className={this.state.hoveredItem === 6 ? "content-menu-hover" : ""}>
+                                        {this.state.hoveredItem === 6
+                                            ? "Report local health or environmental issues directly to the Habra authorities."
+                                            : "Community Reporting"}
+                                    </p>
+                                </div>
+                            </Link>
+                            {/* --- END OF CHANGES --- */}
+
                         </div>
                     </div>
                     <div className="footer-about">
@@ -265,7 +283,5 @@ class Home extends React.Component {
         );
     }
 }
-
-
 
 export default Home;

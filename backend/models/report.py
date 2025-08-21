@@ -13,6 +13,7 @@ class ReportCreate(BaseModel):
     reporter_name: str = Field(description="Name of the person reporting")
     phone_number: Annotated[PhoneNumber, Field(description="Phone number of the reporter")]
     role: Optional[str] = Field(None, description="Role of the reporter(CHW/MEMBER)")
+    description: str = Field(description="Description of the report")
     
     category: Literal[
         "Symptoms / Health Concern",
@@ -46,3 +47,10 @@ class ReportResponse(ReportCreate):
 class ReportUpdate(BaseModel):
     status: Literal["In Progress", "Resolved", "Pending"] = Field(..., description="New status of the report")
     resolved_by: Optional[str] = Field(None, description="Name or ID of the person resolving the report")
+    
+    
+class PaginatedReportResponse(BaseModel):
+    total_count: int = Field(description="Total number of reports matching the query.")
+    page: int = Field(description="The current page number.")
+    limit: int = Field(description="The number of items per page.")
+    data: List[ReportResponse] = Field(description="The list of reports for the current page.")
