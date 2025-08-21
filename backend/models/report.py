@@ -3,7 +3,7 @@ from fastapi import FastAPI, UploadFile
 from pydantic import BaseModel, Field
 from typing import Optional, List, Literal
 from datetime import date, time, datetime
-from pydantic_extra_types import PhoneNumber 
+from pydantic_extra_types.phone_numbers import PhoneNumber 
 from typing import Annotated
 
 
