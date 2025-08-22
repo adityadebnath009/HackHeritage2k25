@@ -13,12 +13,12 @@ TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 
-def sms_sender(to_phone: str, message: str, from_phone: str ):
+def sms_sender(to_phone: str, message: str):
     
     try:
         message = client.messages.create(
             body = message,
-            from_=from_phone,
+            from_=TWILIO_PHONE_NUMBER,
             to=to_phone
         )
         return {"status": "success", "message_sid": message.sid}
