@@ -48,6 +48,12 @@ const Dashboard = () => {
         activeMinutes: { today: 45, goal: 30 }
     };
 
+    // ABHA data
+    // const abhaData = async () => {
+    //     let response = await (fetch(URL));
+    //     let abhaData = await response.json();
+    // };
+
     // Health history data
     const healthHistory = [
         { date: '2025-08-10', type: 'Prescription', doctor: 'Dr. Sharma', condition: 'Hypertension' },
@@ -242,6 +248,27 @@ const Dashboard = () => {
                                     <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 transition-colors">
                                         Fetch from ABHA
                                     </button>
+                                </div>
+                            </div>
+
+                            {/* Fetching from ABHA */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-medium mb-3 text-slate-700">ABHA Information</h3>
+                                <div className="space-y-3">
+                                    {healthHistory.map((record, index) => (
+                                        <div key={index} className="p-3 border border-slate-200 rounded-md bg-slate-50">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className="text-sm font-medium text-slate-800">{record.type}</p>
+                                                    <p className="text-xs text-slate-600">
+                                                        {record.doctor && `Dr. ${record.doctor} • `}
+                                                        {record.condition || record.test || record.notes}
+                                                    </p>
+                                                </div>
+                                                <span className="text-xs text-slate-500">{record.date}</span>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
