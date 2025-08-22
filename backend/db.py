@@ -42,3 +42,6 @@ def get_profiles_collection():
 
 def get_medical_records_collection():
     return medical_records_col
+
+def get_prescription_collection():
+    return community_db["prescriptions"]

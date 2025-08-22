@@ -4,8 +4,11 @@ import { Calendar, Pill, User, TrendingUp, Heart, Activity, Weight, Clock, Plus,
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
+import axios from "axios";
+
 
 const Dashboard = () => {
+    const [selectedFile, setSelectedFile] = useState(null);
     const { user, loading } = useContext(AuthContext);
     const [activeTab, setActiveTab] = useState('profile');
     const [bmiData, setBmiData] = useState({ height: '', weight: '', result: null });
@@ -157,6 +160,28 @@ const Dashboard = () => {
             </div>
         );
     }
+    const handleFileChange = (e) => {
+  setSelectedFile(e.target.files[0]);
+};
+
+const handleUpload = async () => {
+  if (!selectedFile) {
+    alert("Please choose a file first");
+    return;
+  }
+  const formData = new FormData();
+  formData.append("file", selectedFile);
+
+  try {
+    const response = await axios.post("http://127.0.0.1:8000/upload-prescription", formData, {
+      headers: { "Content-Type": "multipart/form-data" }
+    });
+    alert("Uploaded successfully: " + response.data.file_id);
+  } catch (error) {
+    console.error("Upload error:", error);
+    alert("Upload failed");
+  }
+};
 
     return (
         <div className="min-h-screen bg-slate-50 p-4 mt-30">
@@ -235,13 +260,17 @@ const Dashboard = () => {
                             {/* Upload and ABHA Section */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center bg-slate-50">
-                                    <Upload className="mx-auto mb-2 text-slate-500" size={32} />
-                                    <h3 className="text-sm font-medium text-slate-700 mb-2">Upload Prescriptions</h3>
-                                    <p className="text-xs text-slate-500 mb-3">Upload your medical prescriptions and reports</p>
-                                    <button className="bg-blue-900 text-white px-4 py-2 rounded-md text-sm hover:bg-slate-800 transition-colors">
-                                        Choose Files
-                                    </button>
-                                </div>
+  <Upload className="mx-auto mb-2 text-slate-500" size={32} />
+  <h3 className="text-sm font-medium text-slate-700 mb-2">Upload Prescriptions</h3>
+  <input type="file" onChange={handleFileChange} className="mb-3" />
+  <button
+    onClick={handleUpload}
+    className="bg-blue-900 text-white px-4 py-2 rounded-md text-sm hover:bg-slate-800 transition-colors"
+  >
+    Upload File
+  </button>
+</div>
+
                                 <div className="p-4 border border-slate-300 rounded-lg bg-slate-50">
                                     <Shield className="mb-2 text-slate-600" size={32} />
                                     <h3 className="text-sm font-medium text-slate-700 mb-2">ABHA Profile Integration</h3>
