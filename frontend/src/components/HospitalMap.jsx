@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import UseGeoLocation from "./UseGeoLocation"; // make sure path is correct
+import UseGeoLocation from "./UseGeoLocation";
 
-// Custom hospital icon (red plus sign)
+// Custom hospital icon
 const hospitalIcon = new L.DivIcon({
     html: `<div style="
       width: 24px;
@@ -24,7 +24,7 @@ const hospitalIcon = new L.DivIcon({
     popupAnchor: [0, -12],
 });
 
-// Custom user icon (blue dot)
+// Custom user icon
 const userIcon = new L.DivIcon({
     html: `<div style="
       width: 18px;
@@ -38,7 +38,7 @@ const userIcon = new L.DivIcon({
     iconAnchor: [9, 9],
 });
 
-export default function HospitalMap() {
+export default function HospitalMap({ onHospitalsFetched }) {
     const { location, error } = UseGeoLocation();
     const [hospitals, setHospitals] = useState([]);
 
@@ -58,8 +58,8 @@ export default function HospitalMap() {
                 encodeURIComponent(query)
             );
             const data = await res.json();
-            console.log("Fetched hospitals:", data.elements); // Debug
             setHospitals(data.elements);
+            onHospitalsFetched?.(data.elements);
         }
 
         if (location) {
@@ -82,15 +82,12 @@ export default function HospitalMap() {
                     attribution="&copy; OpenStreetMap contributors"
                 />
 
-                {/* Show user's location */}
-                <Marker
-                    position={[location.latitude, location.longitude]}
-                    icon={userIcon}
-                >
+                {/* User location */}
+                <Marker position={[location.latitude, location.longitude]} icon={userIcon}>
                     <Popup>You are here</Popup>
                 </Marker>
 
-                {/* Show hospitals with red plus icons */}
+                {/* Hospitals */}
                 {hospitals.map((h, i) => {
                     const lat = h.lat || h.center?.lat;
                     const lon = h.lon || h.center?.lon;
@@ -98,7 +95,7 @@ export default function HospitalMap() {
 
                     return (
                         <Marker key={i} position={[lat, lon]} icon={hospitalIcon}>
-                            <Popup>{h.tags.name || "Unnamed Hospital"}</Popup>
+                            <Popup>{h.tags?.name || "Unnamed Hospital"}</Popup>
                         </Marker>
                     );
                 })}
@@ -107,13 +104,13 @@ export default function HospitalMap() {
             {/* Legend */}
             <div className="flex items-center gap-4 mt-3 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
-                    <div className="w-4 h-4 rounded-full bg-blue-500 border border-white"></div>{" "}
+                    <div className="w-4 h-4 rounded-full bg-blue-500 border border-white"></div>
                     You
                 </div>
                 <div className="flex items-center gap-1">
                     <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white text-xs">
                         +
-                    </div>{" "}
+                    </div>
                     Hospital
                 </div>
             </div>
