@@ -89,7 +89,7 @@ export default function HealthHub() {
         });
     }, [doctorsDirectory, specFilter, docQuery]);
 
-    // ----- Hospital-side quick update (still local only) -----
+    // ----- Hospital-side quick update (local only) -----
     const [updateForm, setUpdateForm] = useState({ beds: "", oxygen: "", ventilators: "" });
     const applyUpdate = (e) => {
         e.preventDefault();
@@ -102,6 +102,31 @@ export default function HealthHub() {
         setUpdateForm({ beds: "", oxygen: "", ventilators: "" });
     };
 
+    // ----- NGO-side quick update (local only) -----
+    const [ngoUpdateForm, setNgoUpdateForm] = useState({
+        bloodGroup: 'A+',
+        bloodUnits: '',
+        ambulances: "",
+        oxygen: "",
+    });
+
+    const applyNgoUpdate = (e) => {
+        e.preventDefault();
+        setInventory(prev => {
+            const newBlood = { ...prev.blood };
+            if (ngoUpdateForm.bloodGroup && ngoUpdateForm.bloodUnits !== "") {
+                newBlood[ngoUpdateForm.bloodGroup] = Number(ngoUpdateForm.bloodUnits);
+            }
+            return {
+                ...prev,
+                ambulances: ngoUpdateForm.ambulances !== "" ? Number(ngoUpdateForm.ambulances) : prev.ambulances,
+                oxygen: ngoUpdateForm.oxygen !== "" ? Number(ngoUpdateForm.oxygen) : prev.oxygen,
+                blood: newBlood,
+            };
+        });
+        setNgoUpdateForm(f => ({ ...f, bloodUnits: "", ambulances: "", oxygen: "" }));
+    };
+
     // ----- Citizen Help Request (no backend) -----
     const [helpForm, setHelpForm] = useState({ name: "", phone: "", need: "Ambulance", details: "" });
     const submitHelp = (e) => {
@@ -112,10 +137,10 @@ export default function HealthHub() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-blue-50">
-            {/* Top Bar with Back */}
+            {/* Top Bar (unchanged) */}
             <div className="sticky top-0 z-20 bg-white/70 backdrop-blur border-b" style={{ backgroundColor: "#1d3878" }}>
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-                    <button onClick={() => navigate("/")} className="flex items-center mr-4 p-1 text-white  hover:bg-blue-500 rounded-lg">
+                    <button onClick={() => navigate("/")} className="flex items-center mr-4 p-1 text-white hover:bg-blue-500 rounded-lg">
                         <ArrowLeft className="w-5 h-5 m-1" />
                     </button>
                     <h1 className="text-xl font-bold text-white items-center">Collaborative Health Resource Hub</h1>
@@ -123,57 +148,34 @@ export default function HealthHub() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 py-6">
-                {/* Analytics Snapshot */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                    <KpiCard icon={<Hospital className="w-7 h-7" />} label="Hospitals" value={analytics.hospitals} />
-                    <KpiCard icon={<Users className="w-7 h-7" />} label="Health Workers" value={analytics.workers} />
-                    <KpiCard icon={<Ambulance className="w-7 h-7" />} label="Ambulances" value={analytics.ambulances} />
-                    <KpiCard icon={<Droplet className="w-7 h-7" />} label="Blood Units" value={analytics.bloodUnits} />
-                </div>
 
-                {/* Alerts */}
-                <section className="mb-6 bg-gray-100 p-4 rounded-xl shadow-lg">
-                    <div className="flex items-center gap-2 mb-3">
-                        <Bell className="w-5 h-5 text-amber-600" />
-                        <h2 className="text-lg font-semibold text-cyan-800">Live Alerts</h2>
-                    </div>
-                    <div className="grid md:grid-cols-3 gap-3">
-                        {alerts.map((a, i) => (
-                            <div key={i} className={`p-3 rounded-xl border shadow-sm ${a.type === "urgent" ? "bg-red-50 border-red-200" : a.type === "advisory" ? "bg-amber-50 border-amber-200" : "bg-cyan-50 border-cyan-200"
-                                }`}>
-                                <div className="flex items-start gap-2">
-                                    <AlertTriangle className="w-4 h-4 mt-0.5" />
-                                    <p className="text-sm text-gray-800">{a.text}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* Quick Actions */}
-                <section className="grid grid-cols-1 rounded-xl sm:grid-cols-3 gap-4 mb-8">
-                    <div className="rounded-2xl shadow-md drop-shadow-gray-700">
+                {/* ===== TOP ROW: Contact + Ambulance (left) and Analytics (right) ===== */}
+                <section className="grid lg:grid-cols-3 gap-6 mb-8">
+                    <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
                         <ActionCard icon={<Hospital className=" text-cyan-600" />} title="Contact Hospital" subtitle="Reach nearest hospitals">
                             <a href="tel:0331234567" className="inline-block px-3 py-2 rounded-lg text-sm bg-cyan-600 text-white hover:bg-cyan-700">Call: 033-1234567</a>
                         </ActionCard>
-                    </div>
-                    <div className="rounded-2xl shadow-md drop-shadow-gray-700">
                         <ActionCard icon={<Ambulance className=" text-red-600" />} title="Call Ambulance" subtitle="Emergency 24/7">
                             <a href="tel:108" className="inline-block px-3 py-2 rounded-lg text-sm bg-red-600 text-white hover:bg-red-700">Dial 108</a>
                         </ActionCard>
                     </div>
-                    <div className="rounded-2xl shadow-md drop-shadow-gray-700">
-                        <ActionCard icon={<Stethoscope className=" text-green-600" />} title="Find Health Workers" subtitle="Doctors, nurses & volunteers">
-                            <button className="inline-block px-3 py-2 rounded-lg text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">Open Directory</button>
-                        </ActionCard>
-                    </div>
 
+                    {/* Analytics (right) */}
+                    <div className="bg-white rounded-2xl shadow p-6">
+                        <Header title="Analytics Snapshot" icon={<Activity className="w-5 h-5" />} />
+                        <div className="grid grid-cols-2 gap-3">
+                            <KpiCard icon={<Hospital className="w-7 h-7" />} label="Hospitals" value={analytics.hospitals} />
+                            <KpiCard icon={<Users className="w-7 h-7" />} label="Health Workers" value={analytics.workers} />
+                            <KpiCard icon={<Ambulance className="w-7 h-7" />} label="Ambulances" value={analytics.ambulances} />
+                            <KpiCard icon={<Droplet className="w-7 h-7" />} label="Blood Units" value={analytics.bloodUnits} />
+                        </div>
+                    </div>
                 </section>
 
-                {/* Inventory & Hospital Updates */}
-                <section className="grid lg:grid-cols-3 gap-6 mb-8">
-                    {/* Inventory Summary */}
-                    <div className="lg:col-span-2 bg-white rounded-2xl shadow p-6">
+                {/* ===== HOSPITAL UPDATE (moved below) ===== */}
+                <div className="grid lg:grid-cols-3 gap-6 mb-8">
+                    <section className="lg:col-span-2 bg-white rounded-2xl shadow p-6">
+
                         <Header title="Health Resource Inventory" icon={<Database className="w-5 h-5" />} />
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                             <StatSmall label="Beds" value={inventory.beds} />
@@ -194,10 +196,32 @@ export default function HealthHub() {
                                 ))}
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Quick Update Form (local only) */}
-                    <div className="bg-white rounded-2xl shadow p-6">
+                    {/* ===== LIVE ALERTS (unchanged) ===== */}
+                    <section className="bg-gray-100 p-4 rounded-xl shadow-lg">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Bell className="w-5 h-5 text-amber-600" />
+                            <h2 className="text-lg font-semibold text-cyan-800">Live Alerts</h2>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            {alerts.map((a, i) => (
+                                <div key={i} className={`p-3 rounded-xl border shadow-sm ${a.type === "urgent" ? "bg-red-50 border-red-200" : a.type === "advisory" ? "bg-amber-50 border-amber-200" : "bg-cyan-50 border-cyan-200"}`}>
+                                    <div className="flex items-start gap-2">
+                                        <AlertTriangle className="w-4 h-4 mt-0.5" />
+                                        <p className="text-sm text-gray-800">{a.text}</p>
+
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+
+
+                {/* ===== INVENTORY (unchanged) ===== */}
+                <div className="grid grid-cols-2 gap-5 mb-8  ">
+                    <section className="bg-white rounded-2xl shadow p-6 mb-8">
                         <Header title="Hospital Update" icon={<Calendar className="w-5 h-5" />} />
                         <form onSubmit={applyUpdate} className="space-y-3">
                             <Input label="Beds" type="number" value={updateForm.beds} onChange={v => setUpdateForm(f => ({ ...f, beds: v }))} />
@@ -205,10 +229,39 @@ export default function HealthHub() {
                             <Input label="Ventilators" type="number" value={updateForm.ventilators} onChange={v => setUpdateForm(f => ({ ...f, ventilators: v }))} />
                             <button type="submit" className="w-full py-2 rounded-lg bg-cyan-600 text-white hover:bg-cyan-700">Save Update</button>
                         </form>
-                    </div>
-                </section>
+                    </section>
+                    <section className="bg-white rounded-2xl shadow p-6 mb-8">
+                        <Header title="NGO Update" icon={<Users className="w-5 h-5" />} />
+                        <form onSubmit={applyNgoUpdate} className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="text-sm text-gray-600">Blood Group</label>
+                                    <select
+                                        value={ngoUpdateForm.bloodGroup}
+                                        onChange={e => setNgoUpdateForm(f => ({ ...f, bloodGroup: e.target.value }))}
+                                        className="w-full border rounded-lg px-3 py-2 mt-1 bg-white"
+                                    >
+                                        {Object.keys(inventory.blood).map(group => (
+                                            <option key={group} value={group}>{group}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <Input label="Units" type="number" value={ngoUpdateForm.bloodUnits} onChange={v => setNgoUpdateForm(f => ({ ...f, bloodUnits: v }))} />
+                            </div>
+                            <div className="">
+                                <Input label="Ambulances" type="number" value={ngoUpdateForm.ambulances} onChange={v => setNgoUpdateForm(f => ({ ...f, ambulances: v }))} />
+                                
+                            </div>
+                            <div>
+                                <Input label="Oxygen Cylinders" type="number" value={ngoUpdateForm.oxygen} onChange={v => setNgoUpdateForm(f => ({ ...f, oxygen: v }))} />
+                            </div>
+                            <button type="submit" className="w-full py-2 rounded-lg bg-cyan-600 text-white hover:bg-cyan-700">Save NGO Update</button>
+                        </form>
+                    </section>
+                </div>
 
-                {/* Hospital Resource Table */}
+
+                {/* ===== Hospital Resource Table (unchanged) ===== */}
                 <section className="bg-white rounded-2xl shadow p-6 mb-8">
                     <Header title="Hospital Resources" icon={<Hospital className="w-5 h-5" />} />
                     <div className="overflow-x-auto">
@@ -245,7 +298,7 @@ export default function HealthHub() {
                     </div>
                 </section>
 
-                {/* Doctors Directory with Filters */}
+                {/* ===== Doctors Directory (unchanged) ===== */}
                 <section className="bg-white rounded-2xl shadow p-6 mb-8">
                     <Header title="Doctor & Specialist Directory" icon={<Stethoscope className="w-5 h-5" />} />
                     <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -282,7 +335,7 @@ export default function HealthHub() {
                     </div>
                 </section>
 
-                {/* NGOs & Volunteers */}
+                {/* ===== NGOs & Volunteers (unchanged) ===== */}
                 <section className="grid lg:grid-cols-2 gap-6 mb-8">
                     <div className="bg-white rounded-2xl shadow p-6">
                         <Header title="NGO Partners" icon={<Users className="w-5 h-5" />} />
@@ -309,11 +362,11 @@ export default function HealthHub() {
                     </div>
                 </section>
 
-                {/* Map Placeholder & Citizen Help */}
+                {/* ===== Map & Request Help (unchanged) ===== */}
                 <section className="grid lg:grid-cols-2 gap-6 mb-10">
                     <div className="bg-white rounded-2xl shadow p-6">
                         <Header title="Nearby Health Centres (Map)" icon={<MapPin className="w-5 h-5" />} />
-                        <div className="h-64 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 grid place-items-center text-gray-500">
+                        <div className="h-110 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 grid place-items-center text-gray-500">
                             Map coming soon
                         </div>
                     </div>
@@ -423,15 +476,8 @@ function Textarea({ label, value, onChange, placeholder }) {
 function Th({ children }) { return <th className="p-2 text-left text-gray-700 text-xs uppercase tracking-wide">{children}</th>; }
 function Td({ children, center, className = "" }) { return <td className={`p-2 ${center ? 'text-center' : ''} ${className}`}>{children}</td>; }
 
-// Utility button styles
-// (Tailwind classes grouped for quick-action anchors)
+// Utility button styles (unused helpers kept)
 const _btn = "inline-block px-3 py-2 rounded-lg text-sm";
 const _primary = "bg-cyan-600 text-white hover:bg-cyan-700";
 const _danger = "bg-red-600 text-white hover:bg-red-700";
 const _muted = "bg-gray-100 text-gray-700 hover:bg-gray-200";
-
-// Expose class helpers to JSX via global definitions
-// (not exported; used as className on <a> / <button>)
-
-
-
