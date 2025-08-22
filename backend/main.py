@@ -1,5 +1,4 @@
 # backend/main.py
-from core.firebase import cred
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import reports, users, medical_records, auth # Import the new routers
