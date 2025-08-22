@@ -20,8 +20,8 @@ community_db = client[COMMUNITY_DB]
 # Collections
 user_col = user_db["Users"]
 report_col = community_db["Report"]
-profiles_col = community_db["profiles"]
-medical_records_col = community_db["medical_records"]
+profiles_col = user_db["profiles"]
+medical_records_col = user_db["medical_records"]
 
 # Dependency function for FastAPI (if needed)
 def get_user_db():

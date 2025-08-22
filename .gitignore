@@ -2,4 +2,4 @@ __pycache__/
 *.pyc
 __pycache__/
 *.pyc
-node_modules/
+node_modules
