@@ -4,7 +4,7 @@ from datetime import date, time, datetime
 from pydantic_extra_types.phone_numbers import PhoneNumber 
 from typing import Annotated
 from bson import ObjectId
-
+PyObjectId = Annotated[ObjectId, Field(description="MongoDB ObjectId")]
 # Helper function to convert ObjectId to str
 def convert_objectid_to_str(v):
     if isinstance(v, ObjectId):
