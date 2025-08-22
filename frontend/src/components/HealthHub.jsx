@@ -368,12 +368,12 @@ export default function HealthHub() {
 
                 {/* ===== Map & Request Help (unchanged) ===== */}
                 <section className="grid lg:grid-cols-2 gap-6 mb-10">
-                    <div className="bg-white rounded-2xl shadow p-6 pt-10">
+                    <div className="bg-white rounded-2xl shadow p-6 mt-10">
                         <Header
                             title="Nearby Health Centres (Map)"
                             icon={<MapPin className="w-5 h-5" />}
                         />
-                        <div className="h-100 rounded-xl overflow-hidden">
+                        <div className="h-[420px] md:h-[420px] rounded-xl overflow-hidden">
                             <HospitalMap />
                         </div>
                     </div>
