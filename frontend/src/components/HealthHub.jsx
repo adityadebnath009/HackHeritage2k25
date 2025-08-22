@@ -1,4 +1,8 @@
 import React, { useMemo, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import HospitalMap from "./HospitalMap";
+
 import {
     ArrowLeft,
     Phone,
@@ -250,7 +254,7 @@ export default function HealthHub() {
                             </div>
                             <div className="">
                                 <Input label="Ambulances" type="number" value={ngoUpdateForm.ambulances} onChange={v => setNgoUpdateForm(f => ({ ...f, ambulances: v }))} />
-                                
+
                             </div>
                             <div>
                                 <Input label="Oxygen Cylinders" type="number" value={ngoUpdateForm.oxygen} onChange={v => setNgoUpdateForm(f => ({ ...f, oxygen: v }))} />
@@ -364,10 +368,13 @@ export default function HealthHub() {
 
                 {/* ===== Map & Request Help (unchanged) ===== */}
                 <section className="grid lg:grid-cols-2 gap-6 mb-10">
-                    <div className="bg-white rounded-2xl shadow p-6">
-                        <Header title="Nearby Health Centres (Map)" icon={<MapPin className="w-5 h-5" />} />
-                        <div className="h-110 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 grid place-items-center text-gray-500">
-                            Map coming soon
+                    <div className="bg-white rounded-2xl shadow p-6 pt-10">
+                        <Header
+                            title="Nearby Health Centres (Map)"
+                            icon={<MapPin className="w-5 h-5" />}
+                        />
+                        <div className="h-100 rounded-xl overflow-hidden">
+                            <HospitalMap />
                         </div>
                     </div>
 
@@ -392,8 +399,8 @@ export default function HealthHub() {
                     </div>
                 </section>
 
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 
