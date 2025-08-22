@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Calendar, Pill, User, TrendingUp, Heart, Activity, Weight, Clock, Plus, Trash2, Bell, Upload, Shield, Watch, History, MessageSquare, Star, Eye, Thermometer, Droplets, Zap, Moon, Sun, Target } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { Link } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 
 const Dashboard = () => {
+    const { user, loading } = useContext(AuthContext);
     const [activeTab, setActiveTab] = useState('profile');
     const [bmiData, setBmiData] = useState({ height: '', weight: '', result: null });
     const [pills, setPills] = useState([
@@ -128,6 +131,25 @@ const Dashboard = () => {
             <span className="font-medium">{label}</span>
         </button>
     );
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-slate-50">
+                <p className="text-lg text-slate-600">Loading dashboard...</p>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-slate-50">
+                <div className="text-center p-10 bg-white rounded-lg shadow-lg">
+                    <h1 className="text-2xl font-bold text-slate-800 mb-4">Access Denied</h1>
+                    <p className="text-slate-600">Please <Link to="/login" className="font-medium text-blue-600 hover:underline">log in</Link> to the site to view your dashboard.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50 p-4 mt-30">
