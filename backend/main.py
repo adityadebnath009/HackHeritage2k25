@@ -1,9 +1,8 @@
 # backend/main.py
 from core.firebase import cred
 from fastapi import FastAPI
-import firebase_admin
 from fastapi.middleware.cors import CORSMiddleware
-from routers import firebase, reports, users, medical_records # Import the new routers
+from routers import reports, users, medical_records, auth # Import the new routers
 
 app = FastAPI(title="Health Bridge API")
 origins = [
@@ -19,12 +18,12 @@ app.add_middleware(
 )
 
 # Include each router only once
-app.include_router(firebase.firebase_router, tags=["Authentication"]) 
+app.include_router(auth.auth_router, tags=["Authentication"])
 app.include_router(reports.router)
 app.include_router(users.profile_router) 
 app.include_router(medical_records.router) 
 
-firebase_admin.initialize_app(cred)
+
 
 @app.get("/")
 def read_root():

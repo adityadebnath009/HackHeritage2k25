@@ -7,9 +7,9 @@ from typing import List
 
 # Import your models and dependencies
 from models.medical_record import MedicalRecordIn, MedicalRecordDB
-from models.profile import ProfileDB
+# from models.profile import ProfileDB
 from db import get_profiles_collection, get_medical_records_collection
-from routers.firebase import verify_otp 
+from routers.auth import verify_otp 
 
 router = APIRouter(prefix="/profiles", tags=["Medical Records"])
 

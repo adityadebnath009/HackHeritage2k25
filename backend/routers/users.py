@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from pymongo.collection import Collection
 from db import get_profiles_collection
-from routers.firebase import get_current_user
+from routers.auth import get_current_user
 from models.profile import ProfileDB
 from bson import ObjectId
 profile_router = APIRouter(prefix="/users", tags=["Users"])

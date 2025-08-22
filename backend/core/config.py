@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 
 # Load environment variables from .env
-load_dotenv(dotenv_path="/Users/adityadebnath/QuantumBeings/HackHeritage2k25/backend/.env")
+load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI")
 USER_DB = os.getenv("USER_DB")
