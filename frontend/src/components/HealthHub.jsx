@@ -139,6 +139,8 @@ export default function HealthHub() {
         setHelpForm({ name: "", phone: "", need: "Ambulance", details: "" });
     };
 
+    const [nearbyHospitals, setNearbyHospitals] = useState([]);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-white to-blue-50">
             {/* Top Bar (unchanged) */}
@@ -155,15 +157,47 @@ export default function HealthHub() {
 
                 {/* ===== TOP ROW: Contact + Ambulance (left) and Analytics (right) ===== */}
                 <section className="grid lg:grid-cols-3 gap-6 mb-8">
+                    {/* Nearby Hospitals Listing */}
                     <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
-                        <ActionCard icon={<Hospital className=" text-cyan-600" />} title="Contact Hospital" subtitle="Reach nearest hospitals">
-                            <a href="tel:0331234567" className="inline-block px-3 py-2 rounded-lg text-sm bg-cyan-600 text-white hover:bg-cyan-700">Call: 033-1234567</a>
-                        </ActionCard>
-                        <ActionCard icon={<Ambulance className=" text-red-600" />} title="Call Ambulance" subtitle="Emergency 24/7">
-                            <a href="tel:108" className="inline-block px-3 py-2 rounded-lg text-sm bg-red-600 text-white hover:bg-red-700">Dial 108</a>
-                        </ActionCard>
-                    </div>
+                        <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
+                            {nearbyHospitals.length === 0 ? (
+                                <ActionCard
+                                    icon={<Hospital className="text-cyan-600" />}
+                                    title="No Hospitals Found"
+                                    subtitle="Try moving closer to city area"
+                                />
+                            ) : (
+                                nearbyHospitals.slice(0, 4).map((h, i) => {
+                                    const name = h.tags?.name || "Unnamed Hospital";
+                                    const phone = h.tags?.phone || h.tags?.["contact:phone"] || null;
 
+                                    return (
+                                        <ActionCard
+                                            key={i}
+                                            icon={<Hospital className="text-cyan-600" />}
+                                            title={name}
+                                            subtitle="Nearby hospital"
+                                        >
+                                            {phone ? (
+                                                <a
+                                                    href={`tel:${phone}`}
+                                                    className="inline-block px-3 py-2 rounded-lg text-sm bg-cyan-600 text-white hover:bg-cyan-700"
+                                                >
+                                                    Call: {phone}
+                                                </a>
+                                            ) : (
+                                                <span className="text-gray-500 text-sm">📍 No phone available</span>
+                                            )}
+                                        </ActionCard>
+                                    );
+                                })
+                            )}
+
+                            <ActionCard icon={<Ambulance className=" text-red-600" />} title="Call Ambulance" subtitle="Emergency 24/7">
+                                <a href="tel:108" className="inline-block px-3 py-2 rounded-lg text-sm bg-red-600 text-white hover:bg-red-700">Dial 108</a>
+                            </ActionCard>
+                        </div>
+                    </div>
                     {/* Analytics (right) */}
                     <div className="bg-white rounded-2xl shadow p-6">
                         <Header title="Analytics Snapshot" icon={<Activity className="w-5 h-5" />} />
@@ -374,7 +408,7 @@ export default function HealthHub() {
                             icon={<MapPin className="w-5 h-5" />}
                         />
                         <div className="h-[420px] md:h-[420px] rounded-xl overflow-hidden">
-                            <HospitalMap />
+                            <HospitalMap onHospitalsFetched={setNearbyHospitals} />
                         </div>
                     </div>
 
