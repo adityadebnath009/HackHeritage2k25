@@ -17,6 +17,11 @@ const Dashboard = () => {
     const [personalDetails, setPersonalDetails] = useState({});
     const profileId = user?.uid;
 
+    const [userInput, setUserInput] = useState(""); // store input text
+    const [summary, setSummary] = useState("");
+    const [loadingSummary, setLoadingSummary] = useState(null);
+
+
     useEffect(() => {
         const fetchProfile = async () => {
             if (user?.token) {
@@ -217,6 +222,11 @@ const Dashboard = () => {
         );
     }
 
+    const handleViewSummary = (file_id) => {
+        console.log("User input:", userInput); // you can access the input here
+        // Call backend with userInput + file_id
+    };
+
     return (
         <div className="min-h-screen bg-slate-50 p-4 mt-30">
             <div className="max-w-7xl mx-auto">
@@ -313,6 +323,44 @@ const Dashboard = () => {
                                         ))}
                                     </ul>
                                 )}
+                            </div>
+
+                            <div className="mb-6">
+                                <h3 className="text-lg font-medium mb-3 text-slate-700">Your Summary Report</h3>
+                                {/* User input for LLM prompt */}
+                                <input
+                                    type="text"
+                                    placeholder="Add context or instructions for summary"
+                                    value={userInput}                // bind state
+                                    onChange={(e) => setUserInput(e.target.value)} // update state
+                                    className="border border-slate-300 rounded p-2 w-250 text-sm"
+                                />
+
+                                {/* View Summary Button */}
+                                <button
+                                    //onClick={() => handleViewSummary(p.file_id)}
+                                    className="bg-blue-900 text-white px-4 py-2 ml-10 rounded-md text-sm hover:bg-slate-800 transition-colors"
+                                //disabled={loadingSummary === p.file_id}
+                                >
+                                    {"View Summary"}
+                                    {/* {loadingSummary === p.file_id ? "Loading..." : "View Summary"} */}
+                                </button>
+
+                                {/* Clinical Summary Section */}
+                                {/* {summary && (
+                                    <div className="mt-6 p-4 border border-slate-200 rounded-md bg-slate-50">
+                                        <h4 className="text-md font-medium mb-2 text-slate-700">Clinical Summary</h4>
+                                        <p className="text-sm text-slate-600">{summary}</p>
+                                        <p className="text-sm text-slate-600">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias voluptate officiis expedita reprehenderit doloremque distinctio, est iste provident? Incidunt repellat excepturi, ipsum unde tenetur beatae nam magnam quis aliquid ex.</p>
+                                    </div>
+                                )} */}
+
+                                <div className="mt-6 p-4 border border-slate-200 rounded-md bg-slate-50">
+                                    <h4 className="text-md font-medium mb-2 text-slate-700">Clinical Summary</h4>
+                                    {/* <p className="text-sm text-slate-600">{summary}</p> */}
+                                    <p className="text-sm text-slate-600">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias voluptate officiis expedita reprehenderit doloremque distinctio, est iste provident? Incidunt repellat excepturi, ipsum unde tenetur beatae nam magnam quis aliquid ex.</p>
+                                </div>
+
                             </div>
                         </div>
                     )}
