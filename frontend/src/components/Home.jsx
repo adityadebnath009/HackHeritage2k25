@@ -200,7 +200,7 @@ class Home extends React.Component {
                                     {this.state.hoveredItem !== 6 && <FontAwesomeIcon icon={faBullhorn} />}
                                     <p className={this.state.hoveredItem === 6 ? "content-menu-hover" : ""}>
                                         {this.state.hoveredItem === 6
-                                            ? "Report local health or environmental issues directly to the Habra authorities."
+                                            ? "Report local health or environmental issues directly to the authorities."
                                             : "Community Reporting"}
                                     </p>
                                 </div>

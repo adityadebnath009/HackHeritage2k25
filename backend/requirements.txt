@@ -181,3 +181,5 @@ pip install python-dotenv
 pip install uvicorn
 pip install fastapi
 pip install pymongo
+
+pip install python-multipart
