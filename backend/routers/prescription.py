@@ -2,10 +2,11 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Path, Form
 from fastapi.responses import StreamingResponse
 from pymongo.collection import Collection
-from db import get_prescription_collection
+from db import get_prescription_collection, get_profiles_collection
 from datetime import datetime
 from bson import ObjectId
 import gridfs
+import re
 
 from models.medical_record import MedicalRecordOut
 
@@ -14,11 +15,25 @@ prescription_router = APIRouter()
 # ✅ Upload Prescription
 @prescription_router.post("/upload-prescription", response_model=MedicalRecordOut)
 async def upload_prescription(
-    profile_id: str = Form(...),      # 👈 Send this along with file from frontend
+    profile_id: str | None = Form(None),
+    phone: str | None = Form(None),
     file: UploadFile = File(...),
-    prescriptions_col: Collection = Depends(get_prescription_collection)
+    prescriptions_col: Collection = Depends(get_prescription_collection),
+    profiles_col: Collection = Depends(get_profiles_collection)
 ):
     try:
+        # Resolve profile_id via phone if profile_id not provided
+        if not profile_id:
+            if not phone:
+                raise HTTPException(status_code=400, detail="Either profile_id or phone is required")
+            phone_norm = re.sub(r"\D", "", phone)
+            profile_doc = profiles_col.find_one({"phone": phone})
+            if not profile_doc and phone_norm:
+                profile_doc = profiles_col.find_one({"phone": {"$regex": f"{phone_norm}$"}})
+            if not profile_doc:
+                raise HTTPException(status_code=404, detail="Profile not found for provided phone")
+            profile_id = str(profile_doc.get("_id"))
+
         db = prescriptions_col.database
         fs = gridfs.GridFS(db)
 
@@ -40,6 +55,8 @@ async def upload_prescription(
             file_name=file.filename,
             uploaded_at=prescription_doc["uploaded_at"]
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

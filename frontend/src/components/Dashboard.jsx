@@ -4,222 +4,239 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Link } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const { user, loading } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState('profile');
-  const [bmiData, setBmiData] = useState({ height: '', weight: '', result: null });
+    const [selectedFile, setSelectedFile] = useState(null);
+    const { user, loading } = useContext(AuthContext);
+    const [activeTab, setActiveTab] = useState('profile');
+    const [bmiData, setBmiData] = useState({ height: '', weight: '', result: null });
+    const [prescriptions, setPrescriptions] = useState([]);
+    const [pills, setPills] = useState([]);
+    const [newPill, setNewPill] = useState({ pill_name: '', time: '', phone: user?.phone || '' });
+    const [personalDetails, setPersonalDetails] = useState({});
+    const profileId = user?.uid;
 
-  const [prescriptions, setPrescriptions] = useState([]);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (user?.token) {
+                try {
+                    const response = await axios.get("http://127.0.0.1:8000/users/me", {
+                        headers: { Authorization: `Bearer ${user.token}` },
+                    });
+                    setPersonalDetails(response.data);
+                } catch (error) {
+                    console.error("Error fetching user profile:", error);
+                    toast.error("Could not fetch your profile.");
+                }
+            }
+        };
+        fetchProfile();
+    }, [user]);
 
-  const profileId = user?.uid || "demo_profile_id"; // 
+    const fetchPrescriptions = async () => {
+        if (!profileId) return;
+        try {
+            const res = await axios.get(`http://127.0.0.1:8000/list-prescriptions/${profileId}`);
+            setPrescriptions(res.data);
+        } catch (err) {
+            console.error("Error fetching prescriptions:", err);
+        }
+    };
 
-  // ---- Prescription handling ----
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
+    const fetchPills = async () => {
+        if (!user?.phone) return;
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/reminders/list/${user.phone}`);
+            setPills(response.data);
+        } catch (error) {
+            console.error("Error fetching pills:", error);
+        }
+    };
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      alert("Please choose a file first");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("profile_id", profileId);
+    useEffect(() => {
+        fetchPrescriptions();
+        fetchPills();
+    }, [profileId, user]);
 
-    // debug
-    console.log("Uploading:", selectedFile?.name, "profile_id=", profileId);
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
 
-    try {
-      // remove manual Content-Type header so browser sets boundary
-      await axios.post("http://127.0.0.1:8000/upload-prescription", formData);
-      alert("Uploaded successfully!");
-      fetchPrescriptions();
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Upload failed");
-    }
-  };
+    const handleUpload = async () => {
+        if (!selectedFile) {
+            alert("Please choose a file first");
+            return;
+        }
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("profile_id", profileId);
 
-  const fetchPrescriptions = async () => {
-    try {
-      const res = await axios.get(`http://127.0.0.1:8000/list-prescriptions/${profileId}`);
-      setPrescriptions(res.data);
-    } catch (err) {
-      console.error("Error fetching prescriptions:", err);
-    }
-  };
+        try {
+            await axios.post("http://127.0.0.1:8000/upload-prescription", formData);
+            alert("Uploaded successfully!");
+            fetchPrescriptions();
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert("Upload failed");
+        }
+    };
 
-  useEffect(() => {
-    fetchPrescriptions();
-  }, [profileId]);
+    const handleAddPill = async () => {
+        if (!newPill.pill_name || !newPill.time) {
+            toast.error("Please enter pill name and time.");
+            return;
+        }
+        try {
+            await axios.post("http://127.0.0.1:8000/reminders/create", { ...newPill, phone: user.phone });
+            toast.success("Pill reminder added!");
+            setNewPill({ pill_name: '', time: '', phone: user.phone });
+            fetchPills();
+        } catch (error) {
+            console.error("Error adding pill:", error);
+            toast.error("Failed to add reminder.");
+        }
+    };
 
-  // ---- Rest of your states (pills, campaigns, personalDetails, charts, etc.) ----
-  const [pills, setPills] = useState([
-    { id: 1, name: 'Vitamin D', time: '08:00', frequency: 'Daily', taken: false },
-    { id: 2, name: 'Blood Pressure Med', time: '12:00', frequency: 'Twice Daily', taken: true },
-    { id: 3, name: 'Calcium', time: '20:00', frequency: 'Daily', taken: false }
-  ]);
+    const [campaigns] = useState([
+        { id: 1, name: 'Diabetes Awareness', date: '2025-08-20', status: 'upcoming', type: 'screening' },
+        { id: 2, name: 'Heart Health Check', date: '2025-08-25', status: 'upcoming', type: 'checkup' },
+        { id: 3, name: 'Mental Wellness Week', date: '2025-09-01', status: 'scheduled', type: 'workshop' },
+        { id: 4, name: 'Blood Donation Drive', date: '2025-07-15', status: 'completed', type: 'donation' },
+        { id: 5, name: 'Eye Checkup Camp', date: '2025-06-20', status: 'completed', type: 'screening' }
+    ]);
 
-  const [campaigns, setCampaigns] = useState([
-          { id: 1, name: 'Diabetes Awareness', date: '2025-08-20', status: 'upcoming', type: 'screening' },
-          { id: 2, name: 'Heart Health Check', date: '2025-08-25', status: 'upcoming', type: 'checkup' },
-          { id: 3, name: 'Mental Wellness Week', date: '2025-09-01', status: 'scheduled', type: 'workshop' },
-          { id: 4, name: 'Blood Donation Drive', date: '2025-07-15', status: 'completed', type: 'donation' },
-          { id: 5, name: 'Eye Checkup Camp', date: '2025-06-20', status: 'completed', type: 'screening' }
-      ]);
-  
-      const [personalDetails, setPersonalDetails] = useState({
-          name: 'Ajay Agarwal',
-          age: 32,
-          gender: 'Male',
-          bloodGroup: 'O+',
-          height: '175 cm',
-          weight: '70 kg',
-          emergencyContact: '+91 98765 43210',
-          abhaId: 'ABHA-1234-5678-9012',
-          email: 'ajay.agarwal@email.com',
-          address: 'Mumbai, Maharashtra'
-      });
-  
-      // Wearable data
-      const wearableData = {
-          heartRate: { current: 72, resting: 65, max: 185 },
-          steps: { today: 8247, goal: 10000, weekly: 52341 },
-          calories: { burned: 324, goal: 400 },
-          sleep: { hours: 7.2, quality: 'Good' },
-          bodyTemp: { current: 98.6, normal: true },
-          oxygenSat: { current: 98, normal: true },
-          stress: { level: 'Low', score: 25 },
-          hydration: { current: 6, goal: 8 },
-          bloodPressure: { systolic: 120, diastolic: 80 },
-          activeMinutes: { today: 45, goal: 30 }
-      };
-  
-      // Health history data
-      const healthHistory = [
-          { date: '2025-08-10', type: 'Prescription', doctor: 'Dr. Sharma', condition: 'Hypertension' },
-          { date: '2025-07-25', type: 'Lab Report', test: 'Blood Sugar', result: 'Normal' },
-          { date: '2025-07-15', type: 'Checkup', doctor: 'Dr. Patel', notes: 'Routine checkup' },
-          { date: '2025-06-30', type: 'Prescription', doctor: 'Dr. Kumar', condition: 'Vitamin D deficiency' }
-      ];
-  
-      // Service history
-      const serviceHistory = [
-          { date: '2025-08-15', service: 'Telemedicine Consultation', doctor: 'Dr. Mehta', status: 'completed' },
-          { date: '2025-08-10', service: 'Health Analytics Report', type: 'Monthly Report', status: 'generated' },
-          { date: '2025-08-05', service: 'Pill Reminder Setup', medications: '3 medications', status: 'active' },
-          { date: '2025-07-28', service: 'BMI Tracking', result: 'Normal range', status: 'completed' }
-      ];
-  
-      // Feedback history
-      const feedbackHistory = [
-          { date: '2025-08-12', rating: 5, service: 'Telemedicine', comment: 'Excellent consultation experience' },
-          { date: '2025-08-05', rating: 4, service: 'Analytics', comment: 'Very helpful insights' },
-          { date: '2025-07-20', rating: 5, service: 'Pill Reminder', comment: 'Never miss medications now' },
-          { date: '2025-07-10', rating: 4, service: 'Campaign Registration', comment: 'Easy to register' }
-      ];
-  
-      // Chart data
-      const heartRateData = [
-          { time: '06:00', rate: 65 }, { time: '09:00', rate: 78 }, { time: '12:00', rate: 85 },
-          { time: '15:00', rate: 82 }, { time: '18:00', rate: 90 }, { time: '21:00', rate: 72 }
-      ];
-  
-      const weeklyStepsData = [
-          { day: 'Mon', steps: 8500, calories: 320 },
-          { day: 'Tue', steps: 6200, calories: 280 },
-          { day: 'Wed', steps: 9800, calories: 380 },
-          { day: 'Thu', steps: 7200, calories: 290 },
-          { day: 'Fri', steps: 8900, calories: 340 },
-          { day: 'Sat', steps: 12000, calories: 450 },
-          { day: 'Sun', steps: 5500, calories: 220 }
-      ];
-  
-      const sleepData = [
-          { day: 'Mon', hours: 7.5, quality: 85 },
-          { day: 'Tue', hours: 6.8, quality: 72 },
-          { day: 'Wed', hours: 8.2, quality: 92 },
-          { day: 'Thu', hours: 7.1, quality: 78 },
-          { day: 'Fri', hours: 6.5, quality: 68 },
-          { day: 'Sat', hours: 8.5, quality: 95 },
-          { day: 'Sun', hours: 7.8, quality: 88 }
-      ];
-  
-      const calculateBMI = () => {
-          const height = parseFloat(bmiData.height) / 100;
-          const weight = parseFloat(bmiData.weight);
-          if (height > 0 && weight > 0) {
-              const bmi = weight / (height * height);
-              let category = '';
-              if (bmi < 18.5) category = 'Underweight';
-              else if (bmi < 25) category = 'Normal';
-              else if (bmi < 30) category = 'Overweight';
-              else category = 'Obese';
-  
-              setBmiData(prev => ({ ...prev, result: { bmi: bmi.toFixed(1), category } }));
-          }
-      };
-  
-      const togglePill = (id) => {
-          setPills(pills.map(pill =>
-              pill.id === id ? { ...pill, taken: !pill.taken } : pill
-          ));
-      };
-  
-      const TabButton = ({ id, label, icon: Icon }) => (
-          <button
-              onClick={() => setActiveTab(id)}
-              className={`flex items-center space-x-1.5 px-3 py-2 rounded-md transition-all text-base ${activeTab === id
-                  ? 'bg-blue-800 text-white shadow-md'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-          >
-              <Icon size={16} />
-              <span className="font-medium">{label}</span>
-          </button>
-      );
-  
+    const wearableData = {
+        heartRate: { current: 72, resting: 65, max: 185 },
+        steps: { today: 8247, goal: 10000, weekly: 52341 },
+        calories: { burned: 324, goal: 400 },
+        sleep: { hours: 7.2, quality: 'Good' },
+        bodyTemp: { current: 98.6, normal: true },
+        oxygenSat: { current: 98, normal: true },
+        stress: { level: 'Low', score: 25 },
+        hydration: { current: 6, goal: 8 },
+        bloodPressure: { systolic: 120, diastolic: 80 },
+        activeMinutes: { today: 45, goal: 30 }
+    };
 
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen bg-slate-50">
-      <p className="text-lg text-slate-600">Loading dashboard...</p>
-    </div>;
-  }
+    const healthHistory = [
+        { date: '2025-08-10', type: 'Prescription', doctor: 'Dr. Sharma', condition: 'Hypertension' },
+        { date: '2025-07-25', type: 'Lab Report', test: 'Blood Sugar', result: 'Normal' },
+        { date: '2025-07-15', type: 'Checkup', doctor: 'Dr. Patel', notes: 'Routine checkup' },
+        { date: '2025-06-30', type: 'Prescription', doctor: 'Dr. Kumar', condition: 'Vitamin D deficiency' }
+    ];
 
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-slate-50">
-        <div className="text-center p-10 bg-white rounded-lg shadow-lg">
-          <h1 className="text-2xl font-bold text-slate-800 mb-4">Access Denied</h1>
-          <p className="text-slate-600">Please <Link to="/login" className="font-medium text-blue-600 hover:underline">log in</Link> to the site to view your dashboard.</p>
-        </div>
-      </div>
+    const serviceHistory = [
+        { date: '2025-08-15', service: 'Telemedicine Consultation', doctor: 'Dr. Mehta', status: 'completed' },
+        { date: '2025-08-10', service: 'Health Analytics Report', type: 'Monthly Report', status: 'generated' },
+        { date: '2025-08-05', service: 'Pill Reminder Setup', medications: '3 medications', status: 'active' },
+        { date: '2025-07-28', service: 'BMI Tracking', result: 'Normal range', status: 'completed' }
+    ];
+
+    const feedbackHistory = [
+        { date: '2025-08-12', rating: 5, service: 'Telemedicine', comment: 'Excellent consultation experience' },
+        { date: '2025-08-05', rating: 4, service: 'Analytics', comment: 'Very helpful insights' },
+        { date: '2025-07-20', rating: 5, service: 'Pill Reminder', comment: 'Never miss medications now' },
+        { date: '2025-07-10', rating: 4, service: 'Campaign Registration', comment: 'Easy to register' }
+    ];
+
+    const heartRateData = [
+        { time: '06:00', rate: 65 }, { time: '09:00', rate: 78 }, { time: '12:00', rate: 85 },
+        { time: '15:00', rate: 82 }, { time: '18:00', rate: 90 }, { time: '21:00', rate: 72 }
+    ];
+
+    const weeklyStepsData = [
+        { day: 'Mon', steps: 8500, calories: 320 },
+        { day: 'Tue', steps: 6200, calories: 280 },
+        { day: 'Wed', steps: 9800, calories: 380 },
+        { day: 'Thu', steps: 7200, calories: 290 },
+        { day: 'Fri', steps: 8900, calories: 340 },
+        { day: 'Sat', steps: 12000, calories: 450 },
+        { day: 'Sun', steps: 5500, calories: 220 }
+    ];
+
+    const sleepData = [
+        { day: 'Mon', hours: 7.5, quality: 85 },
+        { day: 'Tue', hours: 6.8, quality: 72 },
+        { day: 'Wed', hours: 8.2, quality: 92 },
+        { day: 'Thu', hours: 7.1, quality: 78 },
+        { day: 'Fri', hours: 6.5, quality: 68 },
+        { day: 'Sat', hours: 8.5, quality: 95 },
+        { day: 'Sun', hours: 7.8, quality: 88 }
+    ];
+
+    const calculateBMI = () => {
+        const height = parseFloat(bmiData.height) / 100;
+        const weight = parseFloat(bmiData.weight);
+        if (height > 0 && weight > 0) {
+            const bmi = weight / (height * height);
+            let category = '';
+            if (bmi < 18.5) category = 'Underweight';
+            else if (bmi < 25) category = 'Normal';
+            else if (bmi < 30) category = 'Overweight';
+            else category = 'Obese';
+
+            setBmiData(prev => ({ ...prev, result: { bmi: bmi.toFixed(1), category } }));
+        }
+    };
+
+    const togglePill = (id) => {
+        setPills(pills.map(pill =>
+            pill.id === id ? { ...pill, taken: !pill.taken } : pill
+        ));
+    };
+
+    const TabButton = ({ id, label, icon: Icon }) => (
+        <button
+            onClick={() => setActiveTab(id)}
+            className={`flex items-center space-x-1.5 px-3 py-2 rounded-md transition-all text-base ${activeTab === id
+                ? 'bg-blue-800 text-white shadow-md'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+        >
+            <Icon size={16} />
+            <span className="font-medium">{label}</span>
+        </button>
     );
-  }
 
-  return (
-           <div className="min-h-screen bg-slate-50 p-4 mt-30">
-               <div className="max-w-7xl mx-auto">
-                   {/* Header */}
-                   <div className="mb-6">
-                       <p className="text-lg text-blue-950 font-bold">Monitor your health journey and stay on track</p>
-                   </div>
-   
-                   {/* Navigation Tabs */}
-                   <div className="flex flex-wrap gap-2 mb-6">
-                       <TabButton id="profile" label="Profile" icon={User} />
-                       <TabButton id="health-history" label="Health History" icon={Activity} />
-                       <TabButton id="wearables" label="Wearables" icon={Watch} />
-                       <TabButton id="pills" label="Pill Reminder" icon={Pill} />
-                       <TabButton id="bmi" label="BMI Calculator" icon={Weight} />
-                       <TabButton id="campaigns" label="Campaigns" icon={Calendar} />
-                       <TabButton id="history" label="App History" icon={History} />
-                   </div>
 
-{/* Tab Content */}
+    if (loading) {
+        return <div className="flex items-center justify-center h-screen bg-slate-50">
+            <p className="text-lg text-slate-600">Loading dashboard...</p>
+        </div>;
+    }
+
+    if (!user) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-slate-50">
+                <div className="text-center p-10 bg-white rounded-lg shadow-lg">
+                    <h1 className="text-2xl font-bold text-slate-800 mb-4">Access Denied</h1>
+                    <p className="text-slate-600">Please <Link to="/login" className="font-medium text-blue-600 hover:underline">log in</Link> to the site to view your dashboard.</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-slate-50 p-4 mt-30">
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="mb-6">
+                    <p className="text-lg text-blue-950 font-bold">Monitor your health journey and stay on track</p>
+                </div>
+
+                {/* Navigation Tabs */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                    <TabButton id="profile" label="Profile" icon={User} />
+                    <TabButton id="health-history" label="Health History" icon={Activity} />
+                    <TabButton id="wearables" label="Wearables" icon={Watch} />
+                    <TabButton id="pills" label="Pill Reminder" icon={Pill} />
+                    <TabButton id="bmi" label="BMI Calculator" icon={Weight} />
+                    <TabButton id="campaigns" label="Campaigns" icon={Calendar} />
+                    <TabButton id="history" label="App History" icon={History} />
+                </div>
+
+                {/* Tab Content */}
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
                     {activeTab === 'profile' && (
                         <div>
@@ -227,39 +244,27 @@ const Dashboard = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
                                     <h3 className="text-sm font-medium text-slate-600 mb-1">Full Name</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.name}</p>
+                                    <p className="text-base text-slate-800">{personalDetails.full_name || 'N/A'}</p>
                                 </div>
                                 <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
                                     <h3 className="text-sm font-medium text-slate-600 mb-1">Age</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.age} years</p>
+                                    <p className="text-base text-slate-800">{personalDetails.age ? `${personalDetails.age} years` : 'N/A'}</p>
                                 </div>
                                 <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
                                     <h3 className="text-sm font-medium text-slate-600 mb-1">Gender</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.gender}</p>
+                                    <p className="text-base text-slate-800">{personalDetails.sex || 'N/A'}</p>
                                 </div>
                                 <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
-                                    <h3 className="text-sm font-medium text-slate-600 mb-1">Blood Group</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.bloodGroup}</p>
+                                    <h3 className="text-sm font-medium text-slate-600 mb-1">Marital Status</h3>
+                                    <p className="text-base text-slate-800">{personalDetails.marital_status || 'N/A'}</p>
                                 </div>
-                                <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
-                                    <h3 className="text-sm font-medium text-slate-600 mb-1">Height</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.height}</p>
-                                </div>
-                                <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
-                                    <h3 className="text-sm font-medium text-slate-600 mb-1">Weight</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.weight}</p>
-                                </div>
-                                <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
-                                    <h3 className="text-sm font-medium text-slate-600 mb-1">ABHA ID</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.abhaId}</p>
-                                </div>
-                                <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
-                                    <h3 className="text-sm font-medium text-slate-600 mb-1">Email</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.email}</p>
-                                </div>
-                                <div className="p-4 border border-slate-200 rounded-md bg-slate-50">
-                                    <h3 className="text-sm font-medium text-slate-600 mb-1">Emergency Contact</h3>
-                                    <p className="text-base text-slate-800">{personalDetails.emergencyContact}</p>
+                                <div className="p-4 border border-slate-200 rounded-md bg-slate-50 col-span-1 md:col-span-2 lg:col-span-3">
+                                    <h3 className="text-sm font-medium text-slate-600 mb-1">Chronic Conditions</h3>
+                                    <p className="text-base text-slate-800">
+                                        {Array.isArray(personalDetails.chronic_conditions) && personalDetails.chronic_conditions.length > 0
+                                            ? personalDetails.chronic_conditions.join(', ')
+                                            : 'No chronic conditions listed'}
+                                    </p>
                                 </div>
                             </div>
                             <div className="mt-6">
@@ -269,49 +274,49 @@ const Dashboard = () => {
                             </div>
                         </div>
                     )}
-                              {activeTab === 'health-history' && (
-            <div>
-              <h2 className="text-xl font-semibold mb-5 text-slate-800">Health History & Prescriptions</h2>
+                    {activeTab === 'health-history' && (
+                        <div>
+                            <h2 className="text-xl font-semibold mb-5 text-slate-800">Health History & Prescriptions</h2>
 
-              {/* Upload */}
-              <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center bg-slate-50 mb-6">
-                <Upload className="mx-auto mb-2 text-slate-500" size={32} />
-                <h3 className="text-sm font-medium text-slate-700 mb-2">Upload Prescription</h3>
-                <input type="file" onChange={handleFileChange} className="mb-3" />
-                <button
-                  onClick={handleUpload}
-                  className="bg-blue-900 text-white px-4 py-2 rounded-md text-sm hover:bg-slate-800 transition-colors"
-                >
-                  Upload File
-                </button>
-              </div>
+                            {/* Upload */}
+                            <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center bg-slate-50 mb-6">
+                                <Upload className="mx-auto mb-2 text-slate-500" size={32} />
+                                <h3 className="text-sm font-medium text-slate-700 mb-2">Upload Prescription</h3>
+                                <input type="file" onChange={handleFileChange} className="mb-3" />
+                                <button
+                                    onClick={handleUpload}
+                                    className="bg-blue-900 text-white px-4 py-2 rounded-md text-sm hover:bg-slate-800 transition-colors"
+                                >
+                                    Upload File
+                                </button>
+                            </div>
 
-              {/* Prescriptions list */}
-              <div className="mb-6">
-                <h3 className="text-lg font-medium mb-3 text-slate-700">Your Prescriptions</h3>
-                {prescriptions.length === 0 ? (
-                  <p className="text-sm text-slate-500">No prescriptions uploaded yet.</p>
-                ) : (
-                  <ul className="space-y-2">
-                    {prescriptions.map((p, idx) => (
-                      <li key={idx} className="p-3 border border-slate-200 rounded-md bg-slate-50 flex justify-between">
-                        <span>{p.file_name} ({new Date(p.uploaded_at).toLocaleDateString()})</span>
-                        <a
-                          href={`http://127.0.0.1:8000/get-prescription/${p.file_id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline text-sm"
-                        >
-                          View
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          )}
-{activeTab === 'wearables' && (
+                            {/* Prescriptions list */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-medium mb-3 text-slate-700">Your Prescriptions</h3>
+                                {prescriptions.length === 0 ? (
+                                    <p className="text-sm text-slate-500">No prescriptions uploaded yet.</p>
+                                ) : (
+                                    <ul className="space-y-2">
+                                        {prescriptions.map((p, idx) => (
+                                            <li key={idx} className="p-3 border border-slate-200 rounded-md bg-slate-50 flex justify-between">
+                                                <span>{p.file_name} ({new Date(p.uploaded_at).toLocaleDateString()})</span>
+                                                <a
+                                                    href={`http://127.0.0.1:8000/get-prescription/${p.file_id}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:underline text-sm"
+                                                >
+                                                    View
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'wearables' && (
                         <div>
                             <h2 className="text-xl font-semibold mb-5 text-slate-800">Wearable Device Data</h2>
 
@@ -427,26 +432,46 @@ const Dashboard = () => {
                         <div>
                             <div className="flex justify-between items-center mb-5">
                                 <h2 className="text-xl font-semibold text-slate-800">Pill Reminder</h2>
-                                <button className="bg-blue-900 text-white px-3 py-2 rounded-md hover:bg-slate-800 transition-colors flex items-center space-x-2 text-sm">
-                                    <Plus size={16} />
-                                    <span>Add Pill</span>
-                                </button>
                             </div>
+
+                            {/* Add Pill Form */}
+                            <div className="p-4 border rounded-lg bg-slate-50 mb-6">
+                                <h3 className="text-lg font-medium text-slate-700 mb-3">Add New Reminder</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Pill Name (e.g., Vitamin C)"
+                                        value={newPill.pill_name}
+                                        onChange={(e) => setNewPill({ ...newPill, pill_name: e.target.value })}
+                                        className="w-full p-2 border border-slate-300 rounded-md"
+                                    />
+                                    <input
+                                        type="time"
+                                        value={newPill.time}
+                                        onChange={(e) => setNewPill({ ...newPill, time: e.target.value })}
+                                        className="w-full p-2 border border-slate-300 rounded-md"
+                                    />
+                                    <button
+                                        onClick={handleAddPill}
+                                        className="bg-blue-900 text-white px-3 py-2 rounded-md hover:bg-slate-800 transition-colors flex items-center justify-center space-x-2 text-sm"
+                                    >
+                                        <Plus size={16} />
+                                        <span>Add Pill</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Pill List */}
                             <div className="space-y-3">
-                                {pills.map(pill => (
-                                    <div key={pill.id} className={`p-4 border rounded-lg ${pill.taken ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'}`}>
+                                {pills.map((pill, index) => (
+                                    <div key={index} className="p-4 border rounded-lg bg-white border-slate-200">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-3">
-                                                <button
-                                                    onClick={() => togglePill(pill.id)}
-                                                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${pill.taken ? 'bg-green-600 border-green-600' : 'border-slate-300'
-                                                        }`}
-                                                >
-                                                    {pill.taken && <div className="w-2 h-2 bg-white rounded-full" />}
-                                                </button>
+                                                <div className="bg-blue-100 p-2 rounded-full">
+                                                    <Pill size={16} className="text-blue-700" />
+                                                </div>
                                                 <div>
-                                                    <h3 className="text-sm font-medium text-slate-800">{pill.name}</h3>
-                                                    <p className="text-xs text-slate-600">{pill.frequency}</p>
+                                                    <h3 className="text-sm font-medium text-slate-800">{pill.pill_name}</h3>
                                                 </div>
                                             </div>
                                             <div className="flex items-center space-x-3">
@@ -454,14 +479,17 @@ const Dashboard = () => {
                                                     <Clock size={14} />
                                                     <span className="text-xs">{pill.time}</span>
                                                 </div>
-                                                <Bell size={14} className="text-slate-500" />
                                             </div>
                                         </div>
                                     </div>
                                 ))}
+                                {pills.length === 0 && (
+                                    <p className="text-sm text-slate-500 text-center py-4">No pill reminders have been set up yet.</p>
+                                )}
                             </div>
                         </div>
                     )}
+
 
                     {activeTab === 'bmi' && (
                         <div className="max-w-md mx-auto">

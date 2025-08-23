@@ -20,22 +20,37 @@ def get_my_profile(
     """
     Fetches the profile of the currently logged-in user.
     """
-    # Find the profile linked to the current user's UID
-    print(current_user)
-    profile_doc = profiles_col.find_one({"user_id": current_user.get("user_id") or current_user.get("uid") or current_user.get("sub")})
+    print("Current user:", current_user)
+
+    queries = []
+
+    # Try matching profile.user_id against user_id/uid
+    if current_user.get("user_id"):
+        queries.append({"user_id": current_user["user_id"]})
+    if current_user.get("uid"):
+        queries.append({"user_id": current_user["uid"]})
+        queries.append({"uid": current_user["uid"]})  # also check uid field inside profile
+
+    # Also try phone match if available
+    if current_user.get("phone"):
+        queries.append({"phone": current_user["phone"]})
+
+    final_query = {"$or": queries} if len(queries) > 1 else (queries[0] if queries else {})
+
+    profile_doc = profiles_col.find_one(final_query)
 
     if not profile_doc:
-        print(current_user.get("user_id")+ " not found in profiles collection")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Profile not found."
+            detail=f"Profile not found for query: {final_query}"
         )
-    print("Found profile:", profile_doc)
-    # Convert _id to string and map to 'id', then remove '_id' from profile_doc
+
     profile_doc = dict(profile_doc)
     profile_doc['id'] = convert_objectid_to_str(profile_doc.pop('_id', None))
+
     # Ensure all required fields for ProfileDB are present
-    missing_fields = [field for field in ProfileDB.__fields__ if field not in profile_doc]
-    for field in missing_fields:
-        profile_doc[field] = None  # or set a sensible default
+    for field in ProfileDB.__fields__:
+        if field not in profile_doc:
+            profile_doc[field] = None
+
     return ProfileDB(**profile_doc)

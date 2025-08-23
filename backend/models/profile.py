@@ -18,7 +18,6 @@ class ProfileDB(BaseModel):
     full_name: str
     age: Optional[int] = None
     sex: Optional[str] = None
-    dob: Optional[date] = None
     marital_status: Optional[str]
     chronic_conditions: List[str] = Field(default_factory=list)
     medical_records: Annotated[List[str], Field(default_factory=list)] =  Field(default_factory=list)

@@ -7,6 +7,7 @@ from pymongo.collection import Collection
 from db import get_user_collection, get_profiles_collection
 from datetime import datetime
 from fastapi.security import OAuth2PasswordBearer
+from bson import ObjectId
 
 auth_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="verify-otp")
@@ -14,11 +15,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="verify-otp")
 # Twilio client initialization
 client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
 verify_sid = os.getenv("TWILIO_VERIFY_SID")
-
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    # This is a simplified placeholder. In a real-world application,
-    # you would typically decode a JWT here to verify the user's identity.
-    return {"uid": token}
 
 
 @auth_router.post("/send-otp")
@@ -77,3 +73,39 @@ def verify_otp(
 
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+def get_current_user(token: str = Depends(oauth2_scheme), users_col: Collection = Depends(get_user_collection)):
+    """
+    Resolve the bearer token to a user document.
+    The token is treated as either:
+      - a string ObjectId of the user document (_id), or
+      - the phone number stored in the user document.
+    Returns a minimal dict with uid, user_id and phone for downstream use.
+    Raises 401 if not found/invalid.
+    """
+    try:
+        user_doc = None
+        # try ObjectId match first
+        if token and ObjectId.is_valid(token):
+            user_doc = users_col.find_one({"_id": ObjectId(token)})
+
+        # fallback: match by phone
+        if not user_doc and token:
+            user_doc = users_col.find_one({"phone": token})
+
+        # final fallback: match by explicit uid field if present
+        if not user_doc and token:
+            user_doc = users_col.find_one({"uid": token})
+
+        if not user_doc:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+
+        return {
+            "uid": str(user_doc["_id"]),
+            "user_id": str(user_doc["_id"]),
+            "phone": user_doc.get("phone")
+        }
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")

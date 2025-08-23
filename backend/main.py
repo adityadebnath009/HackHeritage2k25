@@ -1,7 +1,7 @@
 # backend/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import reports, users, medical_records, auth, prescription # Import the new routers
+from routers import reports, users, medical_records, auth, prescription, pillReminders # Import the new routers
 
 app = FastAPI(title="Health Bridge API")
 origins = [
@@ -22,7 +22,7 @@ app.include_router(reports.router)
 app.include_router(users.profile_router) 
 app.include_router(medical_records.router) 
 app.include_router(prescription.prescription_router)
-
+app.include_router(pillReminders.pill_router)
 
 
 @app.get("/")
