@@ -1,3 +1,5 @@
+# backend/routers/reports.py
+
 from typing import Literal, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from datetime import date, datetime, timezone
@@ -8,20 +10,32 @@ from utils.id_generator import generate_report_id
 from utils.sms_service import sms_sender
 from bson import ObjectId
 
-router = APIRouter(prefix="/reports", tags = ["Reports"])
+# CHANGE: Import the get_current_user dependency
+from routers.auth import get_current_user
+
+router = APIRouter(prefix="/reports", tags=["Reports"])
 
 
 # Create a report
 @router.post("/create", response_model=ReportResponse, status_code=status.HTTP_201_CREATED)
-def create_report(report: ReportCreate, reports: Collection = Depends(get_reports_collection)):
+def create_report(
+    report: ReportCreate, 
+    reports: Collection = Depends(get_reports_collection),
+    # CHANGE: Add dependency to get the currently authenticated user
+    current_user: dict = Depends(get_current_user)
+):
     # Generate unique report ID
     report_id = generate_report_id()
     
     # Prepare report dictionary for MongoDB
     report_dict = report.dict()
     report_dict["report_id"] = report_id
+    
+    # CHANGE: Automatically set the user_id from the authenticated user's token
+    report_dict["user_id"] = current_user.get("user_id")
+    
     report_dict["created_at"] = datetime.now(timezone.utc)
-    report_dict["status"] = "Pending"  # Ensure new reports start as Pending
+    report_dict["status"] = "Pending"
     
     # Insert into MongoDB
     try:
@@ -40,6 +54,7 @@ def create_report(report: ReportCreate, reports: Collection = Depends(get_report
     response["sms_status"] = sms_result
     
     return response
+
 @router.patch("/update/{report_id}/status", status_code=status.HTTP_200_OK)
 def update_report_status(
     report_id: str,
@@ -95,6 +110,8 @@ def serialize_report(report):
 
 @router.get("/", response_model=PaginatedReportResponse, status_code=status.HTTP_200_OK)
 def get_all_reports(
+    # CHANGE: Add user_id as a filter option
+    user_id: Optional[str] = Query(None, description="Filter reports by user ID"),
     status: Optional[Literal["Pending", "In Progress", "Resolved"]] = Query(None, description="Filter by report status"),
     category: Optional[str] = Query(None, description="Filter by report category"),
     reporter_phone: Optional[str] = Query(None, description="Filter by reporter phone"),
@@ -106,6 +123,8 @@ def get_all_reports(
 ):
     # Build filters
     filter_query = {}
+    if user_id:
+        filter_query["user_id"] = user_id
     if status:
         filter_query["status"] = status
     if category:

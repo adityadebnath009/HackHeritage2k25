@@ -66,12 +66,9 @@ const CommunityReport = () => {
                             <option value="" disabled>
                                 Select a category
                             </option>
-                            <option value="Symptoms / Health Concern">
-                                Symptoms / Health Concern
-                            </option>
-                            <option value="Environmental Health">Environmental Health</option>
+                            <option value="Mental Health">Mental Health</option>
                             <option value="Healthcare Services">Healthcare Services</option>
-                            <option value="Emergency / Disaster">Emergency / Disaster</option>
+                            <option value="Emergency Situations">Emergency Situations</option>
                             <option value="Animal / Vector Issues">Animal / Vector Issues</option>
                             <option value="Community Requests / Awareness">
                                 Community Requests / Awareness

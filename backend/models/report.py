@@ -1,3 +1,4 @@
+# backend/models/report.py
 
 from fastapi import FastAPI, UploadFile
 from pydantic import BaseModel, Field
@@ -8,7 +9,8 @@ from typing import Annotated
 from pydantic import ConfigDict
 
 class ReportCreate(BaseModel):
-    
+    # CHANGE: Added user_id to link the report to a user
+    user_id: Optional[str] = Field(default=None, description="Unique identifier of the user creating the report")
     report_id: Optional[str] = Field(default=None, description="Unique identifier for the report")
     reporter_name: str = Field(description="Name of the person reporting")
     phone_number: Annotated[PhoneNumber, Field(description="Phone number of the reporter")]
