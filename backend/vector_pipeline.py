@@ -50,34 +50,32 @@ def extract_text_with_ocr(pdf_file):
 # Load all documents
 # OCR first, then PyPDFLoader
 # ---------------------------
-all_docs = []
+def load_documents(pdf_files):
+    all_docs = []
+    for pdf_file in pdf_files:
+        try:
+            print(f"[INFO] Processing file: {pdf_file}")
+            # Try OCR first
+            ocr_text = extract_text_with_ocr(pdf_file)
+            if ocr_text:
+                all_docs.append(Document(page_content=ocr_text, metadata={"source": pdf_file, "method": "ocr"}))
+                print(f"[INFO] OCR succeeded for {pdf_file}")
+                continue  # Skip PDFLoader if OCR worked
 
-for pdf_file in patient_pdf_list:
-    try:
-        print(f"[INFO] Processing file: {pdf_file}")
-        # Try OCR first
-        ocr_text = extract_text_with_ocr(pdf_file)
-        if ocr_text:
-            all_docs.append(Document(page_content=ocr_text, metadata={"source": pdf_file, "method": "ocr"}))
-            print(f"[INFO] OCR succeeded for {pdf_file}")
-            continue  # skip PDF loader if OCR worked
+            # Fallback to PyPDFLoader
+            loader = PyPDFLoader(pdf_file)
+            docs = loader.load()
+            all_docs.extend(docs)
+            print(f"[INFO] PyPDFLoader extracted {len(docs)} document(s) from {pdf_file}")
 
-        # Fallback to PyPDFLoader
-        loader = PyPDFLoader(pdf_file)
-        docs = loader.load()
-        all_docs.extend(docs)
-        print(f"[INFO] PyPDFLoader extracted {len(docs)} document(s) from {pdf_file}")
+        except Exception as e:
+            print(f"[ERROR] Failed to load {pdf_file}: {e}")
 
-    except Exception as e:
-        print(f"[ERROR] Failed to load {pdf_file}: {e}")
+    if not all_docs:
+        raise ValueError("[ERROR] No documents were loaded. Check PDF paths or content.")
 
-if not all_docs:
-    raise ValueError("[ERROR] No documents were loaded. Check PDF paths or content.")
-
-print(f"[INFO] Total documents loaded: {len(all_docs)}")
-print("[DEBUG] Sample extracted text:")
-for d in all_docs[:2]:
-    print(d.page_content[:300], "...\n")
+    print(f"[INFO] Total documents loaded: {len(all_docs)}")
+    return all_docs
 
 # ---------------------------
 # Process PDFs: split -> embeddings -> vector store
@@ -105,7 +103,6 @@ def process_pdf(docs):
             documents=split_docs,
             embedding=embedding_model,
             
-            
             collection_name="patient_medical_records"
         )
         print("[INFO] Vector store created successfully")
@@ -116,15 +113,3 @@ def process_pdf(docs):
 # ---------------------------
 # Run the pipeline
 # ---------------------------
-try:
-    vector_store = process_pdf(all_docs)
-    query = "Summarize the patient's lab results"
-    try:
-        results = vector_store.similarity_search(query, k=3)
-        print("----- Retrieved Chunks -----")
-        for idx, r in enumerate(results):
-            print(f"\nChunk {idx+1}:\n{r.page_content[:500]}...")
-    except Exception as e:
-        print(f"[ERROR] Similarity search failed: {e}")
-except Exception as e:
-    print(f"[ERROR] Pipeline failed: {e}")
