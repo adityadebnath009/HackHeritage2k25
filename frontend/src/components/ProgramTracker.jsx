@@ -85,8 +85,8 @@ const ProgramTracker = () => {
         }
     ];
 
-    // Sample user registered campaigns
-    const registeredCamps = [
+    // ⬇️ MODIFIED: turn registeredCamps into state so we can update it
+    const [registeredCamps, setRegisteredCamps] = useState([
         {
             id: 1,
             campaignName: "Blood Donation Drive",
@@ -99,7 +99,7 @@ const ProgramTracker = () => {
             date: "2025-12-12",
             organization: "Health Department"
         }
-    ];
+    ]);
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -159,7 +159,7 @@ const ProgramTracker = () => {
                 <div
                     key={day}
                     className={`h-8 flex items-center justify-center text-sm cursor-pointer rounded-lg hover:bg-blue-50 ${hasEvent ? 'bg-blue-100 text-blue-800 font-semibold border-2 border-blue-300' : ''
-                        } ${day === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentDate.getFullYear() ? 'bg-blue-500 text-white' : ''}`}
+                        } ${day === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentYear ? 'bg-blue-500 text-white' : ''}`}
                 >
                     {day}
                 </div>
@@ -277,7 +277,31 @@ const ProgramTracker = () => {
                                         </div>
 
                                         <div className="mt-4 flex gap-2">
-                                            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                            {/* ⬇️ MODIFIED: add onClick to register and push to registeredCamps with duplicate check */}
+                                            <button
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                                                onClick={() => {
+                                                    const already = registeredCamps.some(
+                                                        (c) =>
+                                                            c.campaignName === campaign.title &&
+                                                            c.organization === campaign.organization
+                                                    );
+                                                    if (already) {
+                                                        alert("⚠️ You have already registered for this campaign.");
+                                                        return;
+                                                    }
+                                                    setRegisteredCamps((prev) => [
+                                                        ...prev,
+                                                        {
+                                                            id: prev.length ? Math.max(...prev.map(p => p.id)) + 1 : 1,
+                                                            campaignName: campaign.title,
+                                                            date: campaign.startDate,
+                                                            organization: campaign.organization
+                                                        }
+                                                    ]);
+                                                    alert("🎉 Registered successfully!");
+                                                }}
+                                            >
                                                 Register
                                             </button>
                                             <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
