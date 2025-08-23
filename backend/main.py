@@ -2,11 +2,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import reports, users, medical_records, auth, prescription, pillReminders # Import the new routers
-
+from utils.sms_service import start_scheduler
 app = FastAPI(title="Health Bridge API")
 origins = [
     "http://localhost:5173", 
 ]
+
+@app.on_event("startup")
+async def startup_event():
+    start_scheduler()
+
 
 app.add_middleware(
     CORSMiddleware,
