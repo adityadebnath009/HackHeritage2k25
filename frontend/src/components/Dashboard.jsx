@@ -16,11 +16,11 @@ const Dashboard = () => {
     const [newPill, setNewPill] = useState({ pill_name: '', time: '', phone: user?.phone || '' });
     const [personalDetails, setPersonalDetails] = useState({});
     const profileId = user?.uid;
-
-    const [userInput, setUserInput] = useState(""); // store input text
+    // --- New States for Summary Feature ---
+    const [userInput, setUserInput] = useState("");
     const [summary, setSummary] = useState("");
-    const [loadingSummary, setLoadingSummary] = useState(null);
-
+    const [loadingSummary, setLoadingSummary] = useState(false);
+    
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -222,9 +222,33 @@ const Dashboard = () => {
         );
     }
 
-    const handleViewSummary = (file_id) => {
-        console.log("User input:", userInput); // you can access the input here
-        // Call backend with userInput + file_id
+    const handleViewSummary = async () => {
+        if (!userInput.trim()) {
+            toast.error("Please enter a question about your records.");
+            return;
+        }
+
+        setLoadingSummary(true);
+        setSummary(""); // Clear previous summary
+
+        try {
+            // Call your backend API endpoint
+            const response = await axios.post('http://127.0.0.1:8000/summarize', {
+                query: userInput
+            });
+
+            if (response.data.summary) {
+                setSummary(response.data.summary);
+            } else {
+                toast.error(response.data.error || "An unknown error occurred.");
+            }
+
+        } catch (error) {
+            console.error("Error fetching summary:", error);
+            toast.error("Could not connect to the summary service. Please ensure the backend is running.");
+        } finally {
+            setLoadingSummary(false);
+        }
     };
 
     return (
@@ -328,39 +352,37 @@ const Dashboard = () => {
                             <div className="mb-6">
                                 <h3 className="text-lg font-medium mb-3 text-slate-700">Your Summary Report</h3>
                                 {/* User input for LLM prompt */}
+                                <div className="flex items-center">
                                 <input
-                                    type="text"
-                                    placeholder="Add context or instructions for summary"
-                                    value={userInput}                // bind state
-                                    onChange={(e) => setUserInput(e.target.value)} // update state
-                                    className="border border-slate-300 rounded p-2 w-250 text-sm"
-                                />
+                        type="text"
+                        placeholder="Ask a question about your medical records"
+                        value={userInput}
+                        onChange={(e) => setUserInput(e.target.value)}
+                        className="border border-slate-300 rounded p-2 flex-grow text-sm"
+                    />
 
                                 {/* View Summary Button */}
                                 <button
-                                    //onClick={() => handleViewSummary(p.file_id)}
-                                    className="bg-blue-900 text-white px-4 py-2 ml-10 rounded-md text-sm hover:bg-slate-800 transition-colors"
-                                //disabled={loadingSummary === p.file_id}
-                                >
-                                    {"View Summary"}
-                                    {/* {loadingSummary === p.file_id ? "Loading..." : "View Summary"} */}
-                                </button>
+                        onClick={handleViewSummary}
+                        className="bg-blue-900 text-white px-4 py-2 ml-4 rounded-md text-sm hover:bg-slate-800 transition-colors disabled:bg-slate-400"
+                        disabled={loadingSummary}
+                    >
+                        {loadingSummary ? "Generating..." : "View Summary"}
+                    </button>
+                    </div>
 
-                                {/* Clinical Summary Section */}
-                                {/* {summary && (
-                                    <div className="mt-6 p-4 border border-slate-200 rounded-md bg-slate-50">
-                                        <h4 className="text-md font-medium mb-2 text-slate-700">Clinical Summary</h4>
-                                        <p className="text-sm text-slate-600">{summary}</p>
-                                        <p className="text-sm text-slate-600">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias voluptate officiis expedita reprehenderit doloremque distinctio, est iste provident? Incidunt repellat excepturi, ipsum unde tenetur beatae nam magnam quis aliquid ex.</p>
-                                    </div>
-                                )} */}
-
-                                <div className="mt-6 p-4 border border-slate-200 rounded-md bg-slate-50">
-                                    <h4 className="text-md font-medium mb-2 text-slate-700">Clinical Summary</h4>
-                                    {/* <p className="text-sm text-slate-600">{summary}</p> */}
-                                    <p className="text-sm text-slate-600">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias voluptate officiis expedita reprehenderit doloremque distinctio, est iste provident? Incidunt repellat excepturi, ipsum unde tenetur beatae nam magnam quis aliquid ex.</p>
-                                </div>
-
+                                {/* Clinical Summary Section - Updated to be dynamic */}
+                {(loadingSummary || summary) && (
+                    <div className="mt-6 p-4 border border-slate-200 rounded-md bg-slate-50">
+                        <h4 className="text-md font-medium mb-2 text-slate-700">Clinical Summary</h4>
+                        {loadingSummary ? (
+                            <p className="text-sm text-slate-600 animate-pulse">Loading your summary...</p>
+                        ) : (
+                            // Using whitespace-pre-wrap to respect newlines from the LLM response
+                            <p className="text-sm text-slate-600 whitespace-pre-wrap">{summary}</p>
+                        )}
+                    </div>
+                )}
                             </div>
                         </div>
                     )}
