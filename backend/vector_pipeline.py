@@ -12,21 +12,47 @@ import os
 # ---------------------------
 # Load environment variables
 # ---------------------------
-load_dotenv(dotenv_path="/Users/adityadebnath/QuantumBeings/HackHeritage2k25/backend/.env")
+# backend/vector_pipeline.py
+
+# ... (keep all your imports at the top)
+
+# ---------------------------
+# Load environment variables
+# ---------------------------
+load_dotenv()
 OPENAI_API_KEY = os.getenv("OPEN_API_KEY")
 if not OPENAI_API_KEY:
-    raise ValueError("OPEN_API_KEY environment variable is not set.")
+    raise ValueError("OPENAI_API_KEY environment variable is not set.")
 print(f"[INFO] Loaded OpenAI API Key")
 
 # ---------------------------
-# List of patient PDF files
+# DYNAMICALLY FIND PATIENT PDF FILES (THIS IS THE FIX)
 # ---------------------------
-patient_pdf_list = [
-    '/Users/adityadebnath/QuantumBeings/HackHeritage2k25/backend/records/TestReport1.pdf',
-    '/Users/adityadebnath/QuantumBeings/HackHeritage2k25/backend/records/TestReport2.pdf',
-    '/Users/adityadebnath/QuantumBeings/HackHeritage2k25/backend/records/TestReport3.pdf'
-]
+# Get the absolute path of the directory where this script is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Construct the path to the 'records' folder
+RECORDS_FOLDER = os.path.join(BASE_DIR, "records")
 
+# Find all files in the records folder that end with .pdf
+patient_pdf_list = [
+    "D:\Sampurna\HackHeritage2k25\\backend\\records\TestReport1.pdf",
+    "D:\Sampurna\HackHeritage2k25\\backend\\records\TestReport2.pdf",
+    "D:\Sampurna\HackHeritage2k25\\backend\\records\TestReport3.pdf"
+]
+if os.path.exists(RECORDS_FOLDER):
+    patient_pdf_list = [
+        os.path.join(RECORDS_FOLDER, f) 
+        for f in os.listdir(RECORDS_FOLDER) if f.lower().endswith(".pdf")
+    ]
+else:
+    print(f"[ERROR] The directory was not found: {RECORDS_FOLDER}")
+
+print(f"[INFO] Found PDF files to process: {patient_pdf_list}")
+
+# ---------------------------
+# Initialize Qdrant client
+# ... (the rest of your file remains the same)
+# ---------------------------
 # ---------------------------
 # Initialize Qdrant client
 # ---------------------------
@@ -102,7 +128,7 @@ def process_pdf(docs):
         vector_store = QdrantVectorStore.from_documents(
             documents=split_docs,
             embedding=embedding_model,
-            
+            url="http://localhost:6333",
             collection_name="patient_medical_records"
         )
         print("[INFO] Vector store created successfully")

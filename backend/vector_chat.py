@@ -1,5 +1,5 @@
 from vector_pipeline import load_documents, process_pdf, patient_pdf_list
-from langchain.promts import PromtTemplate, ChatPromptTemplate
+from langchain.prompts import PromptTemplate, ChatPromptTemplate
 
 from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA

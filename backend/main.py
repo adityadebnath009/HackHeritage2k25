@@ -8,6 +8,8 @@ from vector_pipeline import load_documents, process_pdf, patient_pdf_list
 import os
 from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQA
+
+from vector_pipeline import process_pdf, load_documents, patient_pdf_list
 from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv("OPEN_API_KEY")
@@ -20,8 +22,7 @@ origins = [
 
 class QueryRequest(BaseModel):
     query: str
-    
-app = FastAPI()
+
 qa_chain = None
 
     
